@@ -1,0 +1,190 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<div class="">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mb-2">
+                <div class="btn-toolbar float-right" aria-label="Barra de ofertas" role="toolbar" >
+                    <div class="" aria-label="First group" role="group">
+                        <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                            <?php if($this->usuario->get('rol') == '4dmin' && $this->oferta->get('estado') == 0){ ?>
+                                <a title="Publicar" href="<?php echo $this->basePath('/backend/empleo/oferta/'.$this->oferta->get('id').'/-1/1') ?>" aria-label="Publicar" class="btn btn-success" data-toggle="tooltip" ><i class="far fa-thumbs-up"></i></a>
+                                <a title="Rechazar" href="<?php echo $this->basePath('/backend/empleo/oferta/'.$this->oferta->get('id').'/-1/3') ?>" aria-label="Rechazar" class="btn btn-danger" data-toggle="tooltip" ><i class="far fa-thumbs-down"></i></a>
+                            <?php } ?>
+                            <a title="Volver" href="<?php echo $this->basePath('/backend/empleo/ofertas/') ?>" aria-label="Volver" class="btn btn-light" data-toggle="tooltip" ><i class="fa fa-arrow-left"></i></a>
+                        <?php }else{ ?>
+                            <a title="Volver" href="<?php echo $this->basePath('/backend/empresas/ficha/' . $this->usuario->get('id_emp')) ?>" aria-label="Volver" class="btn btn-light" data-toggle="tooltip" ><i class="fa fa-arrow-left"></i></a>
+                        <?php } ?>
+                    </div>
+                </div>
+                <h1><i class="fa fa-bullhorn"></i> 
+                    <?php if($this->oferta->get('id') > 0){ ?>
+                        Ficha de la oferta de empleo <span class="badge badge-<?php echo Utilidades::systemOptions('ofertas', 'estado',2)[(int)$this->oferta->get('estado')]; ?>"><?php echo $this->oferta->get('titulo'); ?></span>
+                    <?php }else{ ?>
+                        Nueva oferta de empleo
+                    <?php } ?>
+                </h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <?php Utilidades::muestraMensaje($this->ok,$this->ko); ?>
+    <div class="row">
+        <div class="col-12">
+            <ul class="nav nav-tabs mt-2"  id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link <?php if($this->tab_oferta == 'default'){ echo 'active'; } ?> " href="#default" aria-controls="ofertas" role="tab" data-toggle="tab">
+                        Datos
+                    </a>
+                    <?php if($this->oferta->get('id') > 0){ ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?php if($this->tab_oferta == 'candidaturas'){ echo 'active'; } ?>" href="#candidaturas" aria-controls="candidaturas" role="tab" data-toggle="tab">
+                            Candidaturas
+                        </a>
+                    </li>
+                <?php } ?>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade <?php if($this->tab_oferta == 'default'){ echo 'show active'; } ?> " id="default" >
+                    <div class="row">
+                        <div class="col-12">
+                            <form class="wb" action="<?php echo $this->basePath('/backend/empleo/oferta/'.$this->oferta->get('id')) ?>" method="post">
+                                <div class="row mb-2">
+                                    <div class="col-12" >
+                                        <h2 class="text-blue font-weight-bold">Sistema</h2>
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="titulo" class="control-label">Título</label>
+                                        <input type="text" id="titulo" name="titulo" class="form-control" value="<?php echo $this->oferta->get('titulo'); ?>"/>
+                                    </div>
+                                    <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                        <div class="form-group col-sm-6 col-md-3" >
+                                            <label for="empresa" class="control-label">Empresa</label>
+                                            <input type="hidden" id="empr-nombre" name="id_emp" class="form-control empr-nombre" value="<?php echo (int)$this->oferta->get('id_emp'); ?>" />
+                                        </div>
+                                    <?php }else if((int)$this->oferta->get('estado')){ ?>
+                                        <input type="hidden" id="id_emp" name="id_emp" class="form-control" value="<?php echo (int)$this->oferta->get('id_emp'); ?>" />
+                                    <?php }else{ ?>
+                                        <input type="hidden" id="id_emp" name="id_emp" class="form-control" value="<?php echo (int)$this->usuario->get('id_emp'); ?>" />
+                                    <?php } ?>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="estado" class="control-label">Estado</label>
+                                        <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                            <?php echo Utilidades::getSelect($this->oferta->get('estado'),'ofertas','estado'); ?>
+                                        <?php }else{ ?>
+                                            <input type="hidden" id="estado" name="estado" value="<?php echo $this->oferta->get('estado'); ?>"/>
+                                            <p>
+                                                <?php echo Utilidades::systemOptions('ofertas','estado', 1)[(int)$this->oferta->get('estado')]; ?>
+                                            </p>
+                                        <?php } ?>
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="categoria" class="control-label">Categoría</label>
+                                        <input type="hidden" id="cate-nombre-empleo" name="categoria" class="form-control cate-nombre-empleo" value="<?php echo (int)$this->oferta->get('categoria'); ?>" />
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-12" >
+                                        <h2 class="text-blue font-weight-bold">Detalles</h2>
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="fecha" class="control-label">Publicación</label>
+                                        <input type="text" id="fecha" name="fecha" class="form-control datepicker" value="<?php echo $this->oferta->get('fecha'); ?>" <?php if($this->oferta->get('id') > 0){ echo "readonly"; } ?> />
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                       <label for="plazas" class="control-label">Plazas</label>
+                                       <input type="text" id="plazas" name="plazas" class="form-control" value="<?php echo $this->oferta->get('plazas'); ?>" />
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="experiencia" class="control-label">Años de experiencia</label>
+                                        <input type="text" id="experiencia" name="experiencia" class="form-control" value="<?php echo $this->oferta->get('experiencia'); ?>" />
+                                    </div>
+                                    <div class="form-group col-sm-6" >
+                                        <label for="descripcion" class="control-label">Descripción corta</label>
+                                        <textarea type="text" id="descripcion" name="descripcion" class="form-control" value="<?php echo $this->oferta->get('descripcion'); ?>"><?php echo $this->oferta->get('descripcion'); ?></textarea>
+                                    </div>
+                                    <div class="form-group col-sm-6" >
+                                        <label for="info" class="control-label">Información completa</label>
+                                        <textarea type="text" id="info" name="info" class="form-control" value="<?php echo $this->oferta->get('info'); ?>"><?php echo $this->oferta->get('info'); ?></textarea>
+                                    </div>
+                                    <div class="form-group col-12" >
+                                        <input type="hidden" id="id_ofe" name="id_ofe" value="<?php echo $this->oferta->get('id'); ?>"/>
+                                        <input type="hidden" id="id_usu" name="id_usu" value="<?php if($this->oferta->get('id') > 0){ echo $this->oferta->get('id_usu'); }else{ echo $this->usuario->get('id'); } ?>"/>
+                                        <button type="submit" name="boton" value="guardar" class="btn btn-purple float-right">Guardar</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- candidaturas -->
+                <div role="tabpanel" class="tab-pane fade <?php if($this->tab_oferta == 'candidaturas'){ echo 'show active'; } ?> " id="candidaturas" >
+                    <div class="row">
+                        <div class="col-12">
+                            <?php if((int)$this->numc){ ?>
+                            <div class="table-responsive wb" >
+                                <table class="table table-striped" >			
+                                    <thead class="b-color_4 table-header ">
+                                        <tr>
+                                            <th class="table-col-1">ID</th>
+                                            <th class="table-col-3">Usuario</th>
+                                            <th class="table-col-2">Empresa</th>
+                                            <th class="table-col-3 text-center">Fecha</th>
+                                            <th class="table-col-2">Estado</th>
+                                            <th class="table-col-1 text-center">Opc.</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach($this->candidaturas as $candidatura): ?>
+                                            <tr>
+                                                <td>
+                                                    <a href="<?php echo $this->basePath('/backend/empleo/candidatura/' . $candidatura['id_can']) ?>">
+                                                        <span class="badge badge-<?php echo Utilidades::systemOptions('candidaturas', 'estado',2)[(int)$candidatura['candidaturasEstado']]; ?>"><?php echo str_pad($candidatura['id_can'],5,'0',STR_PAD_LEFT); ?></span>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                     <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                                        <a href="<?php echo $this->basePath('/backend/usuarios/ficha/' . $candidatura['id_usu']) ?>" >
+                                                            <?php echo $candidatura['usuariosNombre']." ".$candidatura['usuariosApellidos']; ?>
+                                                        </a>
+                                                    <?php }else{ ?>
+                                                        <?php echo $candidatura['usuariosNombre']." ".$candidatura['usuariosApellidos']; ?>
+                                                    <?php } ?>
+                                                    <?php 
+                                                    if(!empty($candidatura['telefono'])){
+                                                        echo '<br/><small>'.$candidatura['telefono'].'</small>'; 
+                                                    }
+                                                    if(!empty($candidatura['email'])){
+                                                        echo '<br/><small>'.$candidatura['email'].'</small>';
+                                                    }
+                                                    ?>
+                                                </td>
+                                                <td><a href="<?php echo $this->basePath('/backend/empresas/ficha/' . $candidatura['id_emp']) ?>"><?php echo $candidatura['empresasNombre']; ?></a></td>
+                                                <td class="text-center"><?php echo Utilidades::giraFecha($candidatura['candidaturasFecha']); ?></td>
+                                                <td><a href="<?php echo $this->basePath('/backend/empleo/candidatura/' . $candidatura['id_can']) ?>" title="" class="" ><?php echo Utilidades::systemOptions('candidaturas', 'estado',1)[$candidatura['candidaturasEstado']]; ?></a></td>
+                                                <td class="text-center">
+                                                    <a href="<?php echo $this->basePath('/backend/empleo/candidatura/' . $candidatura['id_can']) ?>" title="Editar" class="btn btn-light btn-sm" ><i class="fa fa-edit"></i></a>
+                                                    <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                                        <a href="<?php echo $this->basePath('/backend/empleo/borrarcandidatura/' . $candidatura['id_can']) ?>" title="Borrar" class="btn btn-light btn-sm red" onclick="return confirm('&iquest;Est&aacute; seguro que desea borrar el registro?')" ><i class="fa fa-trash"></i></a>
+                                                    <?php } ?>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                                <?php Utilidades::muestraPaginacion($this->numc, $this->pagc, $this->basePath('/backend/empleo/oferta/' . $this->oferta->get('id').'/'. $this->pagc.'/'),50) ?>
+                            </div>
+                            <?php }else{ ?>
+                                <div class="table-responsive wb" >
+                                    <?php Utilidades::muestraMensaje(null, null, 'No hay ninguna candidatura asociada a esta oferta.'); ?>
+                                </div>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

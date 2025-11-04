@@ -1,0 +1,233 @@
+body{
+    background-color: #f2f3f8;
+    line-height: 1.2;
+    font-family: 'Roboto', sans-serif;
+    font-weight:300;
+}
+td{
+    vertical-align: middle !important;
+}
+b, strong, .table th{
+    font-weight: 500;
+}
+.navbar{
+    padding:0;
+}
+.menu .nav-item{
+    padding:0 10px;
+}
+.menu .nav-item:last-child{
+    padding-right:0;
+}
+#main{
+    margin-top:100px;
+}
+#content{
+    padding:20px 0;
+}
+h1,h2,h3,h4,h5,h6{
+    font-weight:300;
+}
+h1{
+    font-size:1.5rem;
+}
+h2{
+    font-size:1.1rem;
+}
+a{
+    color:#fd4f00;
+}
+a:hover{
+    color:#b93a00;
+}
+.table {
+    margin-bottom:0;
+}
+.wb{
+    padding:15px;
+    background:#fff;
+    border: 1px solid #dee2e6;
+    border-top:0
+}
+.bt-1{
+    border-top: 1px solid #dee2e6;
+}
+.auth .container-fluid{
+    padding:0 15px;
+}
+#auth-image{
+    background-image:url(../images/coiiaoc-panel.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    height:100vh;
+    background-position: center right; 
+}
+#auth-message{
+    position: absolute;
+    left:10vh;
+    bottom:5vh;
+    font-size:3.5em;
+    max-width:600px;
+}
+.logo{
+    width:250px;
+    border-radius:10px;
+}
+.auth .logo{
+    width:300px;
+}
+.bd-5{
+    border-radius:5px;
+}
+.white{
+    background:#fff;
+}
+.ofertas .white{
+    padding:15px 25px;
+    border-left:5px solid #0b70b8;
+    margin-bottom: 10px;
+}
+.btn-light {
+    color: #212529;
+    background-color: #f8f9fa;
+}
+.table-col-1{
+    width:8.33%;
+}
+.table-col-2{
+    width:16.66%;
+}
+.table-col-3{
+    width:25%;
+}
+.table-col-4{
+    width:33.33%;
+}
+.table-col-5{
+    width:41.66%;
+}
+.table-col-6{
+    width:50%;
+}
+.table-col-7{
+    width:58.33%;
+}
+.table-col-8{
+    width:66.66%;
+}
+.table-col-9{
+    width:75%;
+}
+.table-col-10{
+    width:83.33%;
+}
+.table-col-11{
+    width:91.66%;
+}
+.table-col-12{
+    width:100%;
+}
+.align-center{
+    margin:0 auto;
+}
+.alert{
+    margin-bottom:0;
+}
+.badge{
+    font-weight:500;
+}
+.btn{
+    border-radius:50px;
+}
+.btn-purple{
+    color: #fff;
+    background-color: #7a1e99;
+    border-color: #7a1e99;
+    padding-left:20px;
+    padding-right:20px;
+    transition: all 0.5s;
+}
+.btn-purple:hover{
+    background-color: #591670;
+    border-color: #591670;
+    color:#fff;
+}
+.btn-blue{
+    color: #fff;
+    background-color: #0b70b8;
+    border-color: #0d88e0;
+    padding-left:20px;
+    padding-right:20px;
+    transition: all 0.5s;
+}
+.btn-blue:hover{
+    background-color: #0a63a3;
+    border-color: #0d88e0;
+    color:#fff;
+}
+.text-blue{
+    color: #0a63a3;
+}
+.badge-blue,.dropdown-item.active, .dropdown-item:active{
+    color: #fff;
+    background-color: #0b70b8;
+}
+.page-item.active .page-link {
+    z-index: 1;
+    color:#fff;
+    background-color: #0b70b8;
+    border-color: #0b70b8;
+}
+.page-link {
+    color: #0b70b8;
+}
+.page-link:hover {
+    color: #0b70b8;
+}
+.navbar-light .navbar-nav .active > .nav-link, .navbar-light .navbar-nav .nav-link.active, .navbar-light .navbar-nav .nav-link.show, .navbar-light .navbar-nav .show > .nav-link{
+    color: #0b70b8;
+}
+.font-weight-bold{
+    font-weight:500 !important;
+}
+.font-100{
+    font-size:100%;
+}
+.font-2x{
+    font-size:2rem;
+}
+.radius-0{
+    border-radius:0 !important;
+}
+.resumen-inscripcion h2{
+    border-bottom: 2px solid #0a63a3;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+    font-size:1.5rem;
+}
+.form-control::-webkit-input-placeholder { color: #bbbbbb; }  /* WebKit, Blink, Edge */
+.form-control:-moz-placeholder { color: #bbbbbb; }  /* Mozilla Firefox 4 to 18 */
+.form-control::-moz-placeholder { color: #bbbbbb; }  /* Mozilla Firefox 19+ */
+.form-control:-ms-input-placeholder { color: #bbbbbb; }  /* Internet Explorer 10-11 */
+.form-control::-ms-input-placeholder { color: #bbbbbb; }  /* Microsoft Edge */
+.xdebug-error{
+    margin:0 auto;
+    margin-top:50px;
+}
+.dropdown-item {
+    font-weight: 300;
+}
+@media(min-width:768px){
+    
+}
+@media(min-width:992px){
+    
+}
+@media(min-width:1200px){
+
+}
+@media(min-width:1600px){
+    .container-fluid{
+        padding:0 50px;
+    }
+}

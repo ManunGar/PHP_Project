@@ -1,0 +1,150 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<div class="container">
+    <div class="row">
+        <div class="col-12 mb-2">
+            <div class="btn-toolbar float-right" aria-label="Barra de herramientas" role="toolbar" >
+                <div class="" aria-label="First group" role="group">
+                    <a title="Buscar" href="#myModal" aria-label="Buscar" class="btn btn-light" data-toggle="modal" ><i class="fa fa-search"></i></a>
+                    <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                        <a title="Exportar a Excel" href="<?php echo $this->basePath('/backend/formacion/xlsinscritos/') ?>" aria-label="Exportar a Excel" class="btn btn-light" data-toggle="tooltip"><i class="fa fa-file-excel"></i></a>
+                    <?php } ?>
+                    <a title="Mostrar todo" href="<?php echo $this->basePath('/backend/formacion/inscritos/' . $this->pagin . '/114') ?>" aria-label="Mostrar todo" class="btn btn-light" data-toggle="tooltip"><i class="fa fa-sync"></i></a>
+                </div>
+            </div>
+            <h1><i class="fa fa-users"></i> <?php if($this->usuario->get('rol') == '4dmin'){ echo 'Inscritos a cursos y jornadas'; }else{ echo 'Mis inscripciones'; } ?> (<?php echo $this->numin; ?>)</h1>
+        </div>
+    </div>
+    <?php Utilidades::muestraMensaje($this->ok,$this->ko); ?>
+</div>
+<?php if(count($this->inscritos)){?> 
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="table-responsive mt-2 white" >
+                    <table class="table table-sm table-striped" >			
+                        <thead class="b-color_4 table-header ">
+                            <tr>
+                                <th class="table-col-1 text-center">ID</th>
+                                <th class="table-col-3">Nombre</th>
+                                <th class="table-col-3">Curso</th>
+                                <th class="table-col-1 text-center">Fecha</th>
+                                <th class="table-col-1">Importe</th>
+                                <th class="table-col-2">Estado</th>
+                                <?php if($this->usuario->get('rol') != '4dmin'){ ?>
+                                    <th class="table-col-1 text-center">Certificado</th>
+                                <?php } ?>
+                                <th class="table-col-1 text-center">Opc.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach($this->inscritos as $inscrito): ?>
+                                <tr>
+                                    <td class="text-center">
+                                        <a href="<?php echo $this->basePath('/backend/formacion/inscripcion/' . $inscrito['id_ins']) ?>" >
+                                            <span class="badge badge-<?php echo Utilidades::systemOptions('inscripciones', 'estado',2)[(int)$inscrito['estado']]; ?>"><?php echo str_pad($inscrito['id_ins'], 5, '0', STR_PAD_LEFT); ?></span>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                            <a href="<?php echo $this->basePath('/backend/usuarios/ficha/' . $inscrito['id_usu']) ?>" title="" class="">
+                                                <?php echo $inscrito['usuariosNombre']." ".$inscrito['usuariosApellidos']; ?>
+                                            </a>
+                                        <?php }else{ ?>
+                                            <?php if($inscrito['tipo'] != 2){
+                                                echo $inscrito['usuariosNombre']." ".$inscrito['usuariosApellidos'];
+                                            }else{
+                                                echo $inscrito['menoresNombre']." ".$inscrito['menoresApellidos'];
+                                            } ?>
+                                        <?php } ?>
+                                        <?php 
+                                        if(!empty($inscrito['telefono'])){
+                                            echo '<br/><small>'.$inscrito['telefono'].'</small>'; 
+                                        }
+                                        if(!empty($inscrito['email'])){
+                                            echo '<br/><small>'.$inscrito['email'].'</small>';
+                                        }
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                            <a href="<?php echo $this->basePath('/backend/formacion/curso/' . $inscrito['id_cur']) ?>" title="" class="">
+                                                <?php echo $inscrito['cursosNombre']; ?>
+                                            </a>
+                                        <?php }else{ ?>
+                                            <?php echo $inscrito['cursosNombre']; ?>
+                                        <?php } ?>
+                                        <?php echo '<br/><small>' .Utilidades::systemOptions('cursos', 'tipo')[$inscrito['tipo']]; ?>
+                                    </td>
+                                    <td class="text-center"><?php echo Utilidades::giraFecha($inscrito['fecha']); ?></td>
+                                    <td class="text-left"><?php echo number_format($inscrito['importe'],2,'.',',').'&euro;'; ?></td>
+                                    <td><a href="<?php echo $this->basePath('/backend/formacion/inscripcion/' . $inscrito['id_ins']) ?>" title="" class="" ><?php echo Utilidades::systemOptions('inscripciones', 'estado',1)[$inscrito['estado']]; ?></a></td>
+                                    <?php if($this->usuario->get('rol') != '4dmin'){ ?>
+                                        <td class="text-center">
+                                            <?php if(!empty($inscrito['diploma']) && file_exists(\Application\Model\Entity\Inscrito::FILE_DIRECTORY_DIPLOMA . $inscrito['diploma'])){ ?>
+                                                <a href="<?php echo $this->basePath(str_replace('./public', '', \Application\Model\Entity\Inscrito::FILE_DIRECTORY_DIPLOMA) . $inscrito['diploma']); ?>" title="Descargar cerfificado" class="btn btn-light btn-sm" >
+                                                    <i class="fa fa-download"></i>
+                                                </a>
+                                            <?php } ?>
+                                        </td>
+                                    <?php } ?>
+                                    <td class="text-center">
+                                        <a href="<?php echo $this->basePath('/backend/formacion/inscripcion/' . $inscrito['id_ins']) ?>" title="Editar" class="btn btn-light btn-sm" ><i class="fa fa-edit"></i></a>
+                                        <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                            <a href="<?php echo $this->basePath('/backend/formacion/borrarinscrito/' . $inscrito['id_ui']) ?>" title="Borrar" class="btn btn-light btn-sm red" onclick="return confirm('&iquest;Est&aacute; seguro que desea borrar al inscrito?')" ><i class="fa fa-trash"></i></a>
+                                        <?php  } ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                    <?php Utilidades::muestraPaginacion($this->numin, $this->pagin, $this->basePath('/backend/formacion/inscritos/'),50) ?>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php } ?>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" ><i class="fa fa-search"></i> B&uacute;squeda de inscritos</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form action="<?php echo $this->basePath('/backend/formacion/inscritos') ?>" method="post" >
+                <div class="modal-body">
+                    <div class="row ">
+                        <div class="form-group col-12" >
+                            <label for="insc-nombreUsuario" class="control-label">Usuario</label>
+                            <input type="hidden" id="insc-nombreUsuario" name="id_usu" class="form-control usua-nombre" value="<?php echo (int)$this->buscador['id_usu']; ?>" />
+                        </div>
+                        <div class="form-group col-12" >
+                            <label for="insc-nombreCurso" class="control-label">Curso</label>
+                            <input type="hidden" id="insc-nombreCurso" name="id_cur" class="form-control curs-nombre" value="<?php echo (int)$this->buscador['id_cur']; ?>" />
+                        </div>
+                        <div class="form-group col-12 col-md-6" >
+                            <label for="insc-tipo" class="control-label">Tipo</label>
+                            <?php echo Utilidades::getSelect($this->buscador['tipo'],'cursos','tipo',0,0,1); ?>
+                        </div>
+                        <div class="form-group col-12 col-md-6" >
+                            <label for="insc-tipo" class="control-label">Estado</label>
+                            <?php echo Utilidades::getSelect($this->buscador['estado'],'inscripciones','estado',0,0,1); ?>
+                        </div>
+                        <div class="form-group col-6" >
+                            <label for="insc-fechaDesde" class="control-label">Fecha (desde)</label>
+                            <input type="text" id="insc-fechaDesde" name="fechaDesde" class="form-control form-control-sm insc-fechaDesde datepicker" value="<?php echo $this->buscador['fechaDesde']; ?>" />
+                        </div>
+                        <div class="form-group col-6" >
+                            <label for="insc-fechaHasta" class="control-label">Fecha (hasta)</label>
+                            <input type="text" id="insc-fechaHasta" name="fechaHasta" class="form-control form-control-sm insc-fechaHasta datepicker" value="<?php echo $this->buscador['fechaHasta']; ?>" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer ">
+                    <a href="<?php echo $this->basePath('/backend/formacion/inscritos/' . $this->pagin . '/114') ?>" type="button" class="btn btn-light" >Limpiar</a>
+                    <button type="submit" name="boton" value="buscar" class="btn btn-blue ">Buscar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,103 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<div class="container mt-4 resumen-inscripcion">
+    <div class="row">
+        <div class="col-12">
+            <h1><i class="fa fa-edit"></i> Inscripción de empresa</h1>
+        </div>
+    </div>
+    <?php Utilidades::muestraMensaje($this->ok,$this->ko); ?>
+    <div class="row">
+        <div class="col-12">
+            <form class="wb bt-1 bd-5 mt-2" action="<?php echo $this->basePath('/backend/inscripciones/empresa') ?>" method="post">
+                <div class="row">
+                    <div class="col-12" >
+                        <h2 class="text-blue font-weight-bold"><?php echo $this->curso->get('nombre'); ?></h2>
+                        <p><?php echo $this->usuario->get('estimado-nombre'); ?>, le rogamos indique quiénes asistirán al evento. En caso de que sea la primera vez que participan en un evento del Colegio, deberá darlos de alta pulsando el botón de "Añadir nuevo trabajador". Muchas gracias por su interés.</p>
+                    </div>
+                    <div id="participants-container" class="col-12" >
+                        <?php
+                        foreach($this->trabajadores as $trabajador):
+                        ?>
+                            <div class="form-group" >
+                                <input type="checkbox" data-toggle="toggle" data-on="<i class='fa fa-check'></i>" data-off="<i class='fa fa-times'></i>" data-onstyle="success" data-offstyle="secondary" data-size="sm" name="id_usu[<?php echo $trabajador->get('id') ?>]" id="id_usu[<?php echo $trabajador->get('id') ?>]" />
+                                <label for="id_usu[<?php echo $trabajador->get('id') ?>]"><?php echo $trabajador->get('nombre') . ' ' . $trabajador->get('apellidos'); ?></label>
+                            </div>
+                        <?php
+                        endforeach;
+                        ?>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12" >
+                        <div class="form-group" >
+                            <input type="hidden" name="id_cur" value="<?php echo $this->curso->get('id') ?>" />
+                            <button type="submit" name="boton" value="guardar" class="btn btn-purple float-right">Terminar inscripción</button>
+                            <a href="#add-employee" data-toggle="modal" class="btn btn-blue float-left mr-2">Añadir nuevo trabajador</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="add-employee" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" ><i class="fa fa-user-plus"></i> Nuevo trabajador</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form id="add-employee-form" class="wb" action="#" method="post">
+                <div class="row">
+                    <div class="col-12 " >
+                        <div class="row">
+                            <div class="form-group col-12 col-sm-6" >
+                                <label for="nombre" class="control-label">Nombre *</label>
+                                <input type="text" id="nombre" name="nombre[]" class="form-control" value="" required />
+                            </div>
+                            <div class="form-group col-12 col-sm-6" >
+                                <label for="apellidos" class="control-label">Apellidos *</label>
+                                <input type="text" id="apellidos" name="apellidos[]" class="form-control" value="" required />
+                            </div>
+                            <div class="form-group col-12 col-sm-6" >
+                                <label for="telefono" class="control-label">Teléfono *</label>
+                                <input type="text" id="telefono" name="telefono[]" class="form-control" value="" />
+                            </div>
+                            <div class="form-group col-12 col-sm-6" >
+                                <label for="email" class="control-label">Email *<span id="message-email" class="text-danger d-none">El email ya existe</span></label>
+                                <input type="email" id="email" name="email[]" class="form-control" value="" required />
+                            </div>
+                            <div class="form-group col-12 col-sm-6" >
+                                <label for="nif" class="control-label">NIF *<span id="message-nif" class="text-danger d-none">El nif ya existe</span></label>
+                                <input type="text" id="nif" name="nif[]" class="form-control" value="" required />
+                            </div>
+                            <div class="form-group col-12 col-sm-6" >
+                                <label for="colegiado" class="control-label">Nº de colegiado</label>
+                                <input type="text" id="colegiado" name="colegiado[]" class="form-control" value=""0 />
+                            </div>
+                            <div class="form-group col-12 col-sm-6" >
+                                <label for="sexo" class="control-label">Sexo</label>
+                                <?php echo Utilidades::getSelect(0,'usuarios','sexo',0,0,0,'sexo[]'); ?>
+                            </div>
+                            <div class="form-group col-12 col-sm-6" >
+                                <label for="nacimiento" class="control-label">Fecha de nacimiento</label>
+                                <input type="text" id="nacimiento" name="nacimiento[]" class="form-control datepicker" value="" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12" >
+                                <div class="form-group" >
+                                    <input type="hidden" name="id_cur" value="<?php echo $this->curso->get('id') ?>" />
+                                    <input type="hidden" id="colegiado" name="colegiado[]" class="form-control" value="" />
+                                    <input type="hidden" id="sitcol" name="sitcol[]" class="form-control" value="3" />
+                                    <button id="add-employee" type="submit" name="boton" value="guardar" class="btn btn-blue float-right">Añadir trabajador</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

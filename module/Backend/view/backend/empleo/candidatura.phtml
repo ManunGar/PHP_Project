@@ -1,0 +1,167 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<div class="">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mb-2">
+                <div class="btn-toolbar float-right" aria-label="Barra de candidaturas" role="toolbar" >
+                    <div class="" aria-label="First group" role="group">
+                        <?php if(($this->usuario->get('rol') == '4dmin') || ($this->usuario->get('id_emp') == $this->oferta->get('id_emp') && (int)$this->usuario->get('autorizado') == 1)){ ?>
+                            <?php if($this->candidatura->get('estado') == 1){ ?>
+                                <a title="Preseleccionar" href="<?php echo $this->basePath('/backend/empleo/candidatura/'.$this->candidatura->get('id').'/2') ?>" aria-label="Preseleccionar" class="btn btn-info" data-toggle="tooltip" ><i class="far fa-hand-point-up"></i></a>
+                            <?php } ?>
+                            <?php if($this->candidatura->get('estado') > 0 && $this->candidatura->get('estado') != 3){ ?>
+                                <a title="Seleccionar" href="<?php echo $this->basePath('/backend/empleo/candidatura/'.$this->candidatura->get('id').'/3') ?>" aria-label="Seleccionar" class="btn btn-success" data-toggle="tooltip" ><i class="far fa-thumbs-up"></i></a>
+                            <?php } ?>
+                            <?php if($this->candidatura->get('estado') > 0 && $this->candidatura->get('estado') != 4){ ?>
+                                <a title="Descartar" href="<?php echo $this->basePath('/backend/empleo/candidatura/'.$this->candidatura->get('id').'/4') ?>" aria-label="Descartar" class="btn btn-danger" data-toggle="tooltip" ><i class="far fa-thumbs-down"></i></a>
+                            <?php } ?>
+                        <?php } ?>
+                        <a title="Volver" href="<?php echo $this->basePath('/backend/empleo/candidaturas/') ?>" aria-label="Volver" class="btn btn-light" data-toggle="tooltip" ><i class="fa fa-arrow-left"></i></a>
+                    </div>
+                </div>
+                <h1><i class="fa fa-address-card"></i> 
+                    <?php if($this->candidatura->get('id') > 0){ ?>
+                        Ficha de la candidatura <span class="badge badge-<?php echo Utilidades::systemOptions('candidaturas', 'estado',2)[(int)$this->candidatura->get('estado')]; ?>"><?php echo str_pad($this->candidatura->get('id'),5,'0',STR_PAD_LEFT); ?></span>
+                    <?php }else{ ?>
+                        Nueva candidatura a oferta de empleo
+                    <?php } ?>
+                </h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <?php Utilidades::muestraMensaje($this->ok,$this->ko); ?>
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-12">
+                    <form class="wb" action="<?php echo $this->basePath('/backend/empleo/candidatura/'.$this->candidatura->get('id')) ?>" method="post">
+                        <div class="row mb-2">
+                            <div class="col-12" >
+                                <h2 class="text-blue font-weight-bold">Datos de gestión</h2>
+                            </div>
+                            <div class="form-group col-12 col-sm-6 col-md-3" >
+                                <label for="usua-nombre" class="control-label">
+                                    <?php if($this->usuario->get('rol') == '4dmin' && (int)$this->candidatura->get('id_usu')){ ?>
+                                        <a href="<?php echo $this->basePath('/backend/usuarios/ficha/'.(int)$this->candidatura->get('id_usu')); ?>">Candidato</a> *
+                                    <?php }else{ ?>
+                                        Candidato *
+                                    <?php } ?>
+                                </label>
+                                <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                    <input type="hidden" id="usua-nombre" name="id_usu" class="form-control usua-nombre" value="<?php echo (int)$this->candidatura->get('id_usu'); ?>" />
+                                <?php }else{ ?>
+                                    <p class="form-control" readonly><?php echo $this->cliente->get('nombre-completo'); ?></p>
+                                <?php } ?>
+                            </div>
+                            <div class="form-group col-12 col-sm-6 col-md-3" >
+                                <label for="ofer-nombre" class="control-label">
+                                    <?php if($this->usuario->get('rol') == '4dmin' && (int)$this->candidatura->get('id_ofe')){ ?>
+                                        <a href="<?php echo $this->basePath('/backend/empleo/oferta/'.(int)$this->candidatura->get('id_ofe')); ?>">Oferta</a> *
+                                    <?php }else{ ?>
+                                        Oferta *
+                                    <?php } ?>
+                                </label>
+                                <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                    <input type="hidden" id="ofer-nombre" name="id_ofe" class="form-control ofer-nombre" value="<?php echo (int)$this->candidatura->get('id_ofe'); ?>" />
+                                <?php }else{ ?>
+                                    <p class="form-control" readonly><?php echo $this->oferta->get('titulo'); ?></p>
+                                <?php } ?>
+                            </div>
+                            <div class="form-group col-12 col-sm-6 col-md-3" >
+                                <label for="estado" class="control-label">Estado</label>
+                                <?php if($this->usuario->get('rol') == '4dmin'){ 
+                                    echo Utilidades::getSelect((int)$this->candidatura->get('estado'),'candidaturas','estado'); 
+                                }else{ ?>
+                                <p class="form-control" readonly><?php echo Utilidades::systemOptions('candidaturas','estado')[(int)$this->candidatura->get('estado')]; ?></p>
+                                <?php } ?>
+                            </div>
+                            <?php if((int)$this->candidatura->get('id')){ ?>
+                                <div class="form-group col-12 col-sm-6 col-md-3" >
+                                    <label for="fecha" class="control-label">Fecha de creación</label>
+                                    <input type="text" id="fecha" name="fecha" class="form-control datepicker" value="<?php echo $this->candidatura->get('fecha'); ?>" readonly />
+                                </div>
+                            <?php }else{ ?> 
+                                    <input type="hidden" name="fecha" value="<?php echo date('d-m-Y H:m:s'); ?>" />
+                            <?php } ?>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-12" >
+                                <h2 class="text-blue font-weight-bold">Datos del candidato</h2>
+                            </div>
+                            <div class="form-group col-12 col-sm-6" >
+                                <label for="comentario" class="control-label">Carta de presentación</label>
+                                <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                    <textarea type="text" id="comentario" name="comentario" class="form-control" ><?php echo $this->candidatura->get('comentario'); ?> </textarea>
+                                <?php }else{ ?>
+                                    <p class="form-control" readonly><?php echo nl2br($this->candidatura->get('comentario')); ?></p>
+                                <?php } ?>
+                            </div>
+                            <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                <div class="col-12 col-sm-6 mt-4" >
+                                    <input type="hidden" name="id_can" value="<?php echo $this->candidatura->get('id'); ?>" />
+                                    <button type="submit" name="boton" value="guardar" class="btn btn-purple float-right">Guardar</button>
+                                </div>
+                            <?php } ?>
+                        </div>
+                        <?php if($this->candidatura->get('id') > 0){ ?>
+                            <div class="row mb-2">
+                                <div class="form-group col-sm-6 col-md-3" >
+                                    <label for="telefono" class="control-label">Teléfono</label>
+                                    <input type="text" id="telefono" name="telefono" class="form-control form-control-sm" value="<?php echo $this->cliente->get('telefono'); ?>" readonly />
+                                </div>
+                                <div class="form-group col-sm-6 col-md-3" >
+                                    <label for="email" class="control-label">Email</label>
+                                    <input type="text" id="email" name="email" class="form-control form-control-sm" value="<?php echo $this->cliente->get('email'); ?>" readonly />
+                                </div>
+                                <div class="form-group col-sm-6 col-md-3" >
+                                    <label for="sexo" class="control-label">Sexo</label>
+                                    <input type="text" id="sexo" name="sexo" class="form-control form-control-sm" value="<?php echo Utilidades::systemOptions('usuarios','sexo')[(int)$this->cliente->get('sexo')]; ?>" readonly />
+                                </div>
+                                <div class="form-group col-sm-6 col-md-3" >
+                                    <label for="nacimiento" class="control-label">Fecha de nacimiento</label>
+                                    <input type="text" id="nacimiento" name="nacimiento" class="form-control form-control-sm datepicker" value="<?php echo $this->cliente->get('nacimiento'); ?>" readonly />
+                                </div>
+                                <div class="form-group col-sm-6 col-md-3" >
+                                    <label for="titulacion" class="control-label">Titulación</label>
+                                    <input type="text" id="titulacion" name="titulacion" class="form-control form-control-sm" value="<?php echo $this->cliente->get('titulacion'); ?>" readonly />
+                                </div>
+                                <div class="form-group col-sm-6 col-md-3" >
+                                    <label for="master" class="control-label">Máster</label>
+                                    <input type="text" id="master" name="master" class="form-control form-control-sm" value="<?php echo $this->cliente->get('master'); ?>" readonly />
+                                </div>
+                                <div class="form-group col-sm-6 col-md-3" >
+                                    <label for="cv" class="control-label">&nbsp;</label><br />
+                                    <?php if(!empty($this->cliente->get('cv')) && file_exists($this->cliente::FILE_DIRECTORY_CV . $this->cliente->get('cv'))){ ?>
+                                        <a class="btn btn-blue  mr-2" target="_BLANK" href="<?php echo $this->basePath(str_replace('./public', '', $this->cliente::FILE_DIRECTORY_CV) . $this->cliente->get('cv')); ?>" aria-label="Ver CV" >
+                                            Ver CV
+                                        </a>
+                                    <?php } ?>
+                                </div>
+                                <div class="col-12"></div>
+                                <div class="form-group col-sm-6 col-md-3" >
+                                    <label for="sitlab" class="control-label">Situación laboral</label>
+                                    <input type="text" id="sitlab" name="sitlab" class="form-control form-control-sm" value="<?php echo Utilidades::systemOptions('usuarios','sitlab')[(int)$this->cliente->get('sitlab')]; ?>" readonly />
+                                </div>
+                                <div class="form-group col-sm-6 col-md-3" >
+                                    <label for="especialidad" class="control-label">Especialidad</label>
+                                    <input type="text" id="especialidad" name="especialidad" class="form-control form-control-sm" value="<?php echo $this->cliente->get('especialidad'); ?>" readonly />
+                                </div>
+                                <div class="form-group col-sm-6 col-md-3" >
+                                    <label for="jornada" class="control-label">Tipo de jornada</label>
+                                    <input type="text" id="jornada" name="jornada" class="form-control form-control-sm" value="<?php echo Utilidades::systemOptions('usuarios','jornada')[(int)$this->cliente->get('jornada')]; ?>" readonly />
+                                </div>
+                                <div class="form-group col-sm-6 col-md-3" >
+                                    <label for="experiencia" class="control-label">Experiencia</label>
+                                    <input type="number" min="0" id="experiencia" name="experiencia" class="form-control form-control-sm" value="<?php echo $this->cliente->get('experiencia'); ?>" readonly />
+                                </div>
+                            </div>
+                        <?php } ?>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

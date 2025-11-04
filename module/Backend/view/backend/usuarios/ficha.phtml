@@ -1,0 +1,654 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<div class="">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mb-2">
+                <div class="btn-toolbar float-right" aria-label="Barra de usuarios" role="toolbar" >
+                    <div class="" aria-label="First group" role="group">
+                        <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                            <a title="Volver" href="<?php echo $this->basePath('/backend/usuarios/index/') ?>" aria-label="Volver" class="btn btn-light" data-toggle="tooltip" ><i class="fa fa-arrow-left"></i></a>
+                        <?php }else if((int)$this->cliente->get('id_emp') && (int)$this->cliente->get('autorizado') == 1){ ?>
+                            <a title="Mi empresa" href="<?php echo $this->basePath('/backend/empresas/ficha/') ?>" aria-label="Mi empresa" class="btn btn-light" data-toggle="tooltip" ><i class="fa fa-building"></i></a>
+                        <?php }else{ ?>
+                            <a title="Registrar nueva empresa" href="<?php echo $this->basePath('/backend/empresas/ficha/') ?>" aria-label="Registrar nueva empresa" class="btn btn-light" data-toggle="tooltip" ><i class="fa fa-building"></i></a>
+                        <?php } ?>
+                    </div>
+                </div>
+                <h1><i class="fa fa-user"></i>
+                    <?php if($this->cliente->get('id') > 0){ ?>
+                        Ficha del usuario <b><?php echo $this->cliente->get('nombre-completo'); ?></b>
+                    <?php }else{ ?>
+                        Nuevo usuario
+                    <?php } ?>
+                </h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <?php Utilidades::muestraMensaje($this->ok,$this->ko); ?>
+    <div class="row">
+        <div class="col-12">
+            <ul class="nav nav-tabs mt-2"  id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link <?php if($this->tab_usuario == 'default'){ echo 'active'; } ?> " href="#default" aria-controls="pedidos" role="tab" data-toggle="tab">
+                        Datos
+                    </a>
+                </li>
+                <?php if($this->cliente->get('id') > 0){ ?>
+                    <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                        <li class="nav-item">
+                            <a class="nav-link <?php if($this->tab_usuario == 'inscripciones'){ echo 'active'; } ?>" href="#inscripciones" aria-controls="inscripciones" role="tab" data-toggle="tab">
+                                Inscripciones creadas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <?php if($this->tab_usuario == 'inscritos'){ echo 'active'; } ?>" href="#inscritos" aria-controls="inscritos" role="tab" data-toggle="tab">
+                                Cursos inscrito
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <?php if($this->tab_usuario == 'candidaturas'){ echo 'active'; } ?>" href="#candidaturas" aria-controls="candidaturas" role="tab" data-toggle="tab">
+                                Candidaturas
+                            </a>
+                        </li>
+                    <?php } ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?php if($this->tab_usuario == 'menores'){ echo 'active'; } ?>" href="#menores" aria-controls="menores" role="tab" data-toggle="tab">
+                            Menores relacionados
+                        </a>
+                    </li>
+                    <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                        <li class="nav-item">
+                            <a class="nav-link <?php if($this->tab_usuario == 'gestor-documental'){ echo 'active'; } ?>" href="#gestor-documental" aria-controls="gestor-documental" role="tab" data-toggle="tab">
+                                Gestor documental
+                            </a>
+                        </li>
+                    <?php } ?>
+                <?php } ?>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade <?php if($this->tab_usuario == 'default'){ echo 'show active'; } ?> " id="default" >
+                    <div class="row">
+                        <div class="col-12">
+                            <form class="wb" action="<?php echo $this->basePath('/backend/usuarios/ficha/'.$this->cliente->get('id')) ?>" method="post">
+                                <div class="row mb-2">
+                                    <div class="col-12" >
+                                        <h2 class="text-blue font-weight-bold">Datos personales</h2>
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="nombre" class="control-label">Nombre *</label>
+                                        <input type="text" id="nombre" name="nombre" class="form-control form-control-sm" value="<?php echo $this->cliente->get('nombre'); ?>" required />
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="apellidos" class="control-label">Apellidos *</label>
+                                        <input type="text" id="apellidos" name="apellidos" class="form-control form-control-sm" value="<?php echo $this->cliente->get('apellidos'); ?>" required />
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="telefono" class="control-label">Teléfono</label>
+                                        <input type="text" id="telefono" name="telefono" class="form-control form-control-sm" value="<?php echo $this->cliente->get('telefono'); ?>" />
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="email" class="control-label">Email *</label>
+                                        <input type="text" id="email" name="email" class="form-control form-control-sm" value="<?php echo $this->cliente->get('email'); ?>" required  />
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="nif" class="control-label">NIF</label>
+                                        <input type="text" id="nif" name="nif" class="form-control form-control-sm" value="<?php echo $this->cliente->get('nif'); ?>" <?php if($this->usuario->get('rol') != '4dmin'){ echo 'disabled'; } ?> />
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="sexo" class="control-label">Sexo</label>
+                                        <?php echo Utilidades::getSelect($this->cliente->get('sexo'),'usuarios','sexo'); ?>
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="nacimiento" class="control-label">Fecha de nacimiento</label>
+                                        <input type="text" id="nacimiento" name="nacimiento" class="form-control form-control-sm datepicker" value="<?php echo $this->cliente->get('nacimiento'); ?>" />
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-12" >
+                                        <h2 class="text-blue font-weight-bold">Colegiación</h2>
+                                    </div>  
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="colegiado" class="control-label">Nº Colegiado</label>
+                                        <input type="text" id="colegiado" name="colegiado" class="form-control form-control-sm" value="<?php echo $this->cliente->get('colegiado'); ?>" <?php if($this->usuario->get('rol') != '4dmin'){ echo 'disabled'; } ?> />
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="sitcol" class="control-label">Situación colegial</label>
+                                        <?php echo Utilidades::getSelect($this->cliente->get('sitcol'),'usuarios','sitcol'); ?>
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="titulacion" class="control-label">Titulación</label>
+                                        <input type="text" id="titulacion" name="titulacion" class="form-control form-control-sm" value="<?php echo $this->cliente->get('titulacion'); ?>" />
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="master" class="control-label">Máster</label>
+                                        <input type="text" id="master" name="master" class="form-control form-control-sm" value="<?php echo $this->cliente->get('master'); ?>" />
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-12" >
+                                        <h2 class="text-blue font-weight-bold">Empleo</h2>
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-4" >
+                                        <label for="sitlab" class="control-label">Situación laboral</label>
+                                        <?php echo Utilidades::getSelect($this->cliente->get('sitlab'),'usuarios','sitlab'); ?>
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="especialidad" class="control-label">Especialidad</label>
+                                        <input type="text" id="especialidad" name="especialidad" class="form-control form-control-sm" value="<?php echo $this->cliente->get('especialidad'); ?>" />
+                                    </div>
+                                    <div class="form-group col-sm-5" >
+                                        <label for="empleo" class="control-label">¿Desea recibir información sobre ofertas de empleo?</label>
+                                        <?php echo Utilidades::getSelect($this->cliente->get('empleo'),'usuarios','empleo'); ?>
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="jornada" class="control-label">Tipo de jornada</label>
+                                        <?php echo Utilidades::getSelect($this->cliente->get('jornada'),'usuarios','jornada'); ?>
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="experiencia" class="control-label">Experiencia</label>
+                                        <input type="number" min="0" id="experiencia" name="experiencia" class="form-control form-control-sm" value="<?php echo $this->cliente->get('experiencia'); ?>" />
+                                    </div>
+                                    <?php if($this->cliente->get('id') > 0){ ?>
+                                        <div class="form-group col-sm-6" >
+                                            <label for="cv" class="control-label">CV</label><br />
+                                            <?php if(!empty($this->cliente->get('cv')) && file_exists(\Application\Model\Entity\Usuario::FILE_DIRECTORY_CV . $this->cliente->get('cv'))){ ?>
+                                                <a class="btn btn-blue  mr-2" target="_BLANK" href="<?php echo $this->basePath(str_replace('./public', '', \Application\Model\Entity\Usuario::FILE_DIRECTORY_CV) . $this->cliente->get('cv')); ?>" aria-label="Ver CV" >
+                                                    Descargar
+                                                </a>
+                                                <a title="Borrar CV" href="<?php echo  $this->basePath('/backend/usuarios/cv/'.$this->cliente->get('id')); ?>" aria-label="Borrar CV" class="btn btn-danger" data-toggle="tooltip" ><i class="fa fa-trash"></i></a>
+                                            <?php }else{ ?>
+                                                <a class="btn btn-blue" href="#carga-cv" aria-label="Adjuntar" data-toggle="modal" >
+                                                    Adjuntar
+                                                </a>
+                                            <?php } ?>
+                                        </div>
+                                    <?php } ?>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-sm-8 col-md-4" >
+                                        <label for="profesional_direccion" class="control-label">Dirección profesional</label>
+                                        <input type="text" id="profesional_direccion" name="profesional_direccion" class="form-control form-control-sm" value="<?php echo $this->cliente->get('profesional_direccion'); ?>" />
+                                    </div>
+                                    <div class="form-group col-sm-4 col-md-2" >
+                                        <label for="profesional_cp" class="control-label">CP</label>
+                                        <input type="text" id="profesional_cp" name="profesional_cp" class="form-control form-control-sm" value="<?php echo $this->cliente->get('profesional_cp'); ?>" />
+                                    </div>
+                                    <div class="form-group col-sm-7 col-md-4" >
+                                        <label for="profesional_poblacion" class="control-label">Población</label>
+                                        <input type="text" id="profesional_cp" name="profesional_poblacion" class="form-control form-control-sm" value="<?php echo $this->cliente->get('profesional_poblacion'); ?>" />
+                                    </div>
+                                    <div class="form-group col-sm-5 col-md-2" >
+                                        <label for="profesional_provincia" class="control-label">Provincia</label>
+                                        <?php echo Utilidades::getSelect($this->cliente->get('profesional_provincia'),'usuarios','profesional_provincia'); ?>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12" >
+                                        <h2 class="text-blue font-weight-bold">Datos de gestión</h2>
+                                    </div> 
+                                    <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                        <div class="form-group col-sm-6 col-md-3" >
+                                            <label for="rol" class="control-label">Rol</label>
+                                            <?php 
+                                            if((int)$this->cliente->get('id')){
+                                                $rol = $this->cliente->get('rol');
+                                            }else{
+                                                $rol = 'us4ario';
+                                            }
+                                            echo Utilidades::getSelect($rol,'usuarios','rol'); 
+                                            ?>
+                                        </div>
+                                    <?php } ?>
+                                    <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                        <div class="form-group col-sm-6 col-md-3" >
+                                            <label for="id_emp" class="control-label">
+                                                <?php
+                                                $id_emp = (int)$this->cliente->get('id_emp');
+                                                if($id_emp){ ?>
+                                                    <a href="<?php echo $this->basePath('/backend/empresas/ficha/'.$id_emp) ?>">Empresa</a>
+                                                <?php }else{ ?>
+                                                    Empresa
+                                                <?php } ?>
+                                            </label>
+                                           <input type="hidden" id="empr-nombre" name="id_emp" class="form-control form-control-sm empr-nombre" value="<?php echo $id_emp; ?>" />
+                                        </div>                         
+                                        <div class="form-group col-sm-6 col-md-3" >
+                                            <label for="autorizado" class="control-label">¿Es autorizado de su empresa?</label>
+                                            <?php echo Utilidades::getSelect($this->cliente->get('autorizado'),'usuarios','autorizado'); ?>
+                                        </div>
+                                    <?php } ?>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <?php if($this->cliente->get('id') > 0){ ?>
+                                            <label for="clave">Su clave actual es: <?php echo $this->cliente->get('desencripta_clave'); ?></label>
+                                            <a href="<?php if($this->set == 2){ ?>#cambia_clave1<?php }else{ ?>#cambia_clave<?php } ?>" data-toggle="modal" >Cambiar</a>
+                                        <?php }else{ ?>
+                                            <label for="clave">Clave de acceso</label>
+                                            <input type="text" class="form-control form-control-sm" id="clave" name="clave" value="" >
+                                        <?php } ?>
+                                    </div>
+                                    <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                        <div class="form-group col-sm-6 col-md-3" >
+                                            <label for="delegacion" class="control-label">Delegación</label>
+                                            <?php echo Utilidades::getSelect($this->cliente->get('delegacion'),'usuarios','delegacion'); ?>
+                                        </div>  
+                                        <div class="form-group col-sm-6 col-md-3" >
+                                            <label for="pago_pendiente" class="control-label">Pago pendiente</label>
+                                            <?php echo Utilidades::getSelect($this->cliente->get('pago_pendiente'),'usuarios','pago_pendiente'); ?>
+                                        </div>
+                                        <div class="form-group col-sm-6 col-md-3" >
+                                            <label for="alta" class="control-label">Fecha de alta</label>
+                                            <input type="text" id="alta" name="alta" class="form-control form-control-sm datepicker" value="<?php echo $this->cliente->get('alta'); ?>" readonly />
+                                        </div>
+                                        <div class="form-group col-sm-6 col-md-3" >
+                                            <label for="sincro" class="control-label">Última sincronización</label>
+                                            <input type="text" id="sincro" name="sincro" class="form-control form-control-sm datepicker" value="<?php echo $this->cliente->get('sincro'); ?>" readonly />
+                                        </div>
+                                        <div class="form-group col-sm-6" >
+                                            <label for="observaciones" class="control-label">Observaciones</label>
+                                            <textarea name="observaciones" class="form-control form-control-sm"><?php echo $this->cliente->get('observaciones'); ?></textarea>
+                                        </div>
+                                        <?php if($this->cliente->get('rol') != '4dmin'){ ?>
+                                            <div class="form-group col-sm-6 col-md-3" >
+                                                <label for="acceso_gestor_documental" class="control-label"><input type="checkbox" name="acceso_gestor_documental" class="" value="1" <?php if($this->cliente->get('acceso_gestor_documental')){ echo 'checked'; } ?> /> Acceso al gestor documental</label>
+                                                
+                                            </div>
+                                        <?php } ?>
+                                        <?php 
+                                            $baja = $this->cliente->get('baja');
+                                            if($baja != null && $baja != '00-00-0000'){ ?>
+                                                <div class="form-group col-sm-6 col-md-3" >
+                                                    <label for="baja" class="control-label">Fecha de borrado</label>
+                                                    <input type="text" id="baja" name="baja" class="form-control form-control-sm datepicker" value="<?php echo $this->cliente->get('baja'); ?>" readonly/>
+                                                </div>
+                                        <?php }else{ ?>
+                                            <input type="hidden" id="baja" name="baja" class="form-control form-control-sm" value=""/>
+                                        <?php } ?>
+                                    <?php } ?>
+                                    <div class="form-group col-12" >
+                                        <input type="hidden" id="id_usu" name="id_usu" value="<?php echo $this->cliente->get('id'); ?>"/>
+                                        <input type="hidden" id="cv" name="cv" value="<?php echo $this->cliente->get('cv'); ?>"/>
+                                        <input type="hidden" name="set" value="1" />
+                                        <button type="submit" name="boton" value="guardar" class="btn btn-purple float-right">Guardar</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                <!-- inscripciones -->
+                <div role="tabpanel" class="tab-pane fade <?php if($this->tab_usuario == 'inscripciones'){ echo 'show active'; } ?> " id="inscripciones" >
+                    <div class="row">
+                        <div class="col-12">
+                            <?php if((int)$this->numi){ ?>
+                            <div class="table-responsive wb" >
+                                <table class="table table-striped" >			
+                                    <thead class="b-color_4 table-header ">
+                                        <tr>
+                                            <th class="table-col-1 text-center">ID</th>
+                                            <th class="table-col-3">Curso</th>
+                                            <th class="table-col-2 text-center">Fecha</th>
+                                            <th class="table-col-1">Importe</th>
+                                            <th class="table-col-3">Estado</th>
+                                            <th class="table-col-1">Nº Inscritos</th>
+                                            <th class="table-col-1 text-center">Opc.</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach($this->inscripciones as $inscripcion): ?>
+                                            <tr>
+                                                <td class="text-center">
+                                                    <a href="<?php echo $this->basePath('/backend/formacion/inscripcion/' . $inscripcion['id_ins']) ?>" >
+                                                        <span class="badge badge-<?php echo Utilidades::systemOptions('inscripciones', 'estado',2)[(int)$inscripcion['estado']]; ?>"><?php echo str_pad($inscripcion['id_ins'], 5, '0', STR_PAD_LEFT); ?></span>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a href="<?php echo $this->basePath('/backend/formacion/curso/' . $inscripcion['id_cur']) ?>"><?php echo $inscripcion['cursosNombre']; ?></a>
+                                                    <?php echo '<br/><small>'.Utilidades::systemOptions('cursos', 'tipo')[(int)$inscripcion['tipo']].'</small>'; ?>
+                                                </td>
+                                                <td class="text-center"><?php echo Utilidades::giraFecha($inscripcion['fecha']); ?></td>
+                                                <td class="text-left"><?php echo number_format($inscripcion['importe'],2,'.',',').'&euro;'; ?></td>
+                                                <td><a href="<?php echo $this->basePath('/backend/formacion/inscripcion/' . $inscripcion['id_ins']) ?>"><?php echo Utilidades::systemOptions('inscripciones', 'estado',1)[$inscripcion['estado']]; ?></a></td>
+                                                <td><?php echo $inscripcion['inscritos']; ?></td>
+                                                <td class="text-center">
+                                                    <a href="<?php echo $this->basePath('/backend/formacion/inscripcion/' . $inscripcion['id_ins']) ?>" title="Editar" class="btn btn-light btn-sm" ><i class="fa fa-edit"></i></a>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                                <?php Utilidades::muestraPaginacion($this->numi, $this->pagi, $this->basePath('/backend/usuarios/ficha/' . $this->cliente->get('id').'/'),50) ?>
+                            </div>
+                            <?php }else{ ?>
+                                <div class="table-responsive wb" >
+                                    <?php Utilidades::muestraMensaje(null, null, 'No hay ninguna inscripción asociada a este usuario.'); ?>
+                                </div>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+                <!-- inscritos -->
+                <div role="tabpanel" class="tab-pane fade <?php if($this->tab_usuario == 'inscritos'){ echo 'show active'; } ?> " id="inscritos" >
+                    <div class="row">
+                        <div class="col-12">
+                            <?php if((int)$this->numins){ ?>
+                            <div class="table-responsive wb" >
+                                <table class="table table-striped" >			
+                                    <thead class="b-color_4 table-header ">
+                                         <tr>
+                                            <th class="table-col-2 text-center">ID</th>
+                                            <th class="table-col-3">Curso</th>
+                                            <th class="table-col-2 text-center">Fecha</th>
+                                            <th class="table-col-3">Estado</th>
+                                            <th class="table-col-2 text-center">Opc.</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach($this->inscritos as $inscrito): ?>
+                                            <tr>
+                                                <td class="text-center">
+                                                    <a href="<?php echo $this->basePath('/backend/formacion/inscripcion/' . $inscrito['id_ins']) ?>" >
+                                                        <span class="badge badge-<?php echo Utilidades::systemOptions('inscripciones', 'estado',2)[(int)$inscrito['estado']]; ?>"><?php echo str_pad($inscrito['id_ins'], 5, '0', STR_PAD_LEFT); ?></span>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                                        <a href="<?php echo $this->basePath('/backend/formacion/curso/' . $inscrito['id_cur']) ?>" title="" class="">
+                                                            <?php echo $inscrito['cursosNombre']; ?>
+                                                        </a>
+                                                    <?php }else{ ?>
+                                                        <?php echo $inscrito['cursosNombre']; ?>
+                                                    <?php } ?>
+                                                    <?php echo '<br/><small>' .Utilidades::systemOptions('cursos', 'tipo')[$inscrito['tipo']]; ?>
+                                                </td>
+                                                <td class="text-center"><?php echo Utilidades::giraFecha($inscrito['fecha']); ?></td>
+                                                <td><a href="<?php echo $this->basePath('/backend/formacion/inscripcion/' . $inscrito['id_ins']) ?>" title="" class="" ><?php echo Utilidades::systemOptions('inscripciones', 'estado',1)[$inscrito['estado']]; ?></a></td>
+                                                <td class="text-center">
+                                                    <a href="<?php echo $this->basePath('/backend/formacion/inscripcion/' . $inscrito['id_ins']) ?>" title="Editar" class="btn btn-light btn-sm" ><i class="fa fa-edit"></i></a>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                                <?php Utilidades::muestraPaginacion($this->numins, $this->pagins, $this->basePath('/backend/usuarios/ficha/' . $this->cliente->get('id').'/'),50) ?>
+                            </div>
+                                <?php }else{ ?>
+                                <div class="table-responsive wb" >
+                                    <?php Utilidades::muestraMensaje(null, null, 'Este usuario no está inscrito a ninguna inscripción.'); ?>
+                                </div>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+                <!-- candidaturas -->
+                <div role="tabpanel" class="tab-pane fade <?php if($this->tab_usuario == 'candidaturas'){ echo 'show active'; } ?> " id="candidaturas" >
+                    <div class="row">
+                        <div class="col-12">
+                            <?php if((int)$this->numc){ ?>
+                            <div class="table-responsive wb" >
+                                <table class="table table-striped" >			
+                                    <thead class="b-color_4 table-header ">
+                                        <tr>
+                                            <th class="table-col-3">Oferta</th>
+                                            <th class="table-col-3">Empresa</th>
+                                            <th class="table-col-3">Fecha</th>
+                                            <th class="table-col-1">Estado</th>
+                                            <th class="table-col-1 text-center">Opc.</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach($this->candidaturas as $candidatura): ?>
+                                            <tr>
+                                                <td><a href="<?php echo $this->basePath('/backend/empleo/candidatura/' . $candidatura['id_can']) ?>"><?php echo $candidatura['titulo']; ?></a></td>
+                                                <td><a href="<?php echo $this->basePath('/backend/empresas/ficha/' . $candidatura['id_emp']) ?>"><?php echo $candidatura['empresasNombre']; ?></a></td>
+                                                <td><?php echo Utilidades::giraFecha($candidatura['candidaturasFecha']); ?></td>
+                                                <td><a href="<?php echo $this->basePath('/backend/empleo/candidatura/' . $candidatura['id_can']) ?>"><?php echo Utilidades::systemOptions('candidaturas', 'estado',1)[$candidatura['candidaturasEstado']]; ?></a></td>
+                                                <td class="text-center">
+                                                    <a href="<?php echo $this->basePath('/backend/empleo/candidatura/' . $candidatura['id_can']) ?>" title="Editar" class="btn btn-light btn-sm" ><i class="fa fa-edit"></i></a>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                                <?php Utilidades::muestraPaginacion($this->numc, $this->pagc, $this->basePath('/backend/usuarios/ficha/' . $this->cliente->get('id').'/'. $this->pagi .'/'),50) ?>
+                            </div>
+                            <?php }else{ ?>
+                                <div class="table-responsive wb" >
+                                    <?php Utilidades::muestraMensaje(null, null, 'No hay ninguna candidatura asociada a este usuario.'); ?>
+                                </div>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+                <?php } ?>
+                <!-- menores -->
+                <div role="tabpanel" class="tab-pane fade <?php if($this->tab_usuario == 'menores'){ echo 'show active'; } ?> " id="menores" >
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="table-responsive wb" >
+                            <?php if((int)$this->numm == 0 ){  Utilidades::muestraMensaje(null, null, 'No hay ningún menor asociado a este usuario.'); 
+                             } ?>
+                            <form id="ppal" action="<?php echo $this->basePath() ?>/backend/usuarios/menores" method="post" >
+                                    <table class="table table-striped" >			
+                                        <thead class="b-color_4 table-header ">
+                                            <tr>
+                                                <th class="table-col-2">Nombre</th>
+                                                <th class="table-col-2">Apellidos</th>
+                                                <th class="table-col-2">Fecha de nacimiento</th>
+                                                <th class="table-col-3">Observaciones</th>
+                                                <th class="table-col-2 text-center">Opc.</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php $id_obj = 0; ?>
+                                            <tr>
+                                                <td>
+                                                    <input class="form-control form-control-sm form-control form-control-sm-sm" type="text" name="nombre[<?php echo $id_obj; ?>]" value="" placeholder="Nombre" />
+                                                    <input type="hidden" name="id_men[<?php echo $id_obj; ?>]" value="<?php echo $id_obj; ?>"/>
+                                                </td>
+                                                <td>
+                                                    <input class="form-control form-control-sm form-control form-control-sm-sm" type="text" name="apellidos[<?php echo $id_obj; ?>]" value="" placeholder="Apellidos" />
+                                                </td>
+                                                <td>
+                                                    <input class="form-control form-control-sm form-control form-control-sm-sm datepicker" type="text" name="nacimiento[<?php echo $id_obj; ?>]" value="" placeholder="Fecha de nacimiento" />
+                                                </td>
+                                                <td>
+                                                    <input class="form-control form-control-sm form-control form-control-sm-sm" type="text" name="observaciones[<?php echo $id_obj; ?>]" value="" placeholder="Observaciones" />
+                                                </td>
+                                                <td class="text-center">
+                                                    <input type="hidden" id="id_usu" name="id_usu" value="<?php echo $this->cliente->get('id'); ?>"/>
+                                                    <button type="submit" name="boton" value="<?php echo $id_obj; ?>" class="btn btn-light btn-sm" title="Guardar este registro">
+                                                        <i class="fa fa-save"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <?php 
+                                            foreach($this->menores as $menor): 
+                                                $id_obj = (int)$menor->get('id');
+                                                ?>
+                                                <tr>
+                                                    <td>
+                                                        <input class="form-control form-control-sm form-control form-control-sm-sm" type="text" name="nombre[<?php echo $id_obj; ?>]" value="<?php echo $menor->get('nombre'); ?>" required />
+                                                        <input type="hidden" name="id_men[<?php echo $id_obj; ?>]" value="<?php echo $id_obj; ?>"/>
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control form-control-sm form-control form-control-sm-sm" type="text" name="apellidos[<?php echo $id_obj; ?>]" value="<?php echo $menor->get('apellidos'); ?>" />
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control form-control-sm form-control form-control-sm-sm datepicker" type="text" name="nacimiento[<?php echo $id_obj; ?>]" value="<?php echo $menor->get('nacimiento'); ?>"/>
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control form-control-sm form-control form-control-sm-sm" type="text" name="observaciones[<?php echo $id_obj; ?>]" value="<?php echo $menor->get('observaciones'); ?>" />
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <button type="submit" name="boton" value="<?php echo $id_obj; ?>" class="btn btn-light btn-sm" title="Guardar este registro">
+                                                            <i class="fa fa-save"></i>
+                                                        </button>
+                                                        <a href="<?php echo $this->basePath('/backend/usuarios/borrarmenor/' . $menor->get('id')) ?>" title="Borrar" class="btn btn-light btn-sm red" onclick="return confirm('&iquest;Est&aacute; seguro que desea borrar el registro?')" ><i class="fa fa-trash"></i></a>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                    <div class="col-12">
+                                        <button type="submit" name="boton" value="guardar-todos" class="btn btn-purple float-right">
+                                            <i class="fa fa-save"></i> Guardar todos
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                <div role="tabpanel" class="tab-pane fade <?php if($this->tab_usuario == 'gestor-documental'){ echo 'show active'; } ?> " id="gestor-documental" >
+                    <div class="row">
+
+                        <div class="col-12">
+                            <div class="table-responsive wb" >
+                                <?php if(count($this->permisos)){ ?>
+                                    <form id="ppal" action="<?php echo $this->basePath() ?>/backend/usuarios/permisos" method="post" >
+                                        <table class="table table-striped" >
+                                            <thead class="b-color_4 table-header ">
+                                            <tr>
+                                                <th class="table-col-6">Directorios de nivel 1</th>
+                                                <th class="table-col-4">Nivel de permisos</th>
+                                                <th class="table-col-2 text-center">Opc.</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <?php
+                                            foreach($this->permisos as $permiso):
+                                                $id_obj = (int)$permiso['id_car'];
+                                                ?>
+                                                <tr>
+                                                    <td>
+                                                        <?php echo $permiso['nombre']; ?>
+                                                    </td>
+                                                    <td>
+                                                        <select name="permiso[<?php echo $id_obj; ?>]" class="select2">
+                                                            <option <?php if((int)$permiso['permiso'] == 0){ echo 'selected'; } ?> value="0">Sin acceso</option>
+                                                            <option <?php if((int)$permiso['permiso'] == 1){ echo 'selected'; } ?> value="1">Solo lectura</option>
+                                                            <option <?php if((int)$permiso['permiso'] == 2){ echo 'selected'; } ?> value="2">Lectura y escritura</option>
+                                                        </select>
+                                                        <input type="hidden" name="id_per[<?php echo $id_obj; ?>]" value="<?php echo $permiso['id_per']; ?>"/>
+                                                        <input type="hidden" name="id_car[<?php echo $id_obj; ?>]" value="<?php echo $id_obj; ?>"/>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <button type="submit" name="boton" value="<?php echo $id_obj; ?>" class="btn btn-light btn-sm" title="Guardar este registro">
+                                                            <i class="fa fa-save"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+                                        <div class="col-12">
+                                            <input type="hidden" name="id_usu" value="<?php echo $this->cliente->get('id'); ?>" />
+                                            <button type="submit" name="boton" value="guardar-todos" class="btn btn-purple float-right">
+                                                <i class="fa fa-save"></i> Guardar todos
+                                            </button>
+                                        </div>
+                                    </form>
+                                <?php }else{ ?>
+                                    <div class="table-responsive wb" >
+                                        <?php Utilidades::muestraMensaje(null, null, 'Aún no se han creado carpetas.'); ?>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php } ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="<?php if($this->set == 2){ ?>cambia_clave1<?php }else{ ?>cambia_clave<?php } ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header b-color-1">
+                    <h2 class="header-table color_6 " >Cambiar clave</h2>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <form action="<?php echo $this->basePath('/backend/usuarios/ficha') ?>" method="post" >
+                    <div class="modal-body">
+                        <div class="modal-body">
+                            <div class="form-group">
+				<label for="clave">Clave de acceso</label>
+                                <input type="text" class="form-control form-control-sm" id="clave" name="clave" placeholder="Clave" value="<?php if($this->set == 2){ echo $this->clave; } ?>" required autofocus >
+                            </div>
+                            <p>Especificaciones para una clave segura</p>
+                            <ul>
+                                <li>
+                                    <p class="<?php if(count($this->array_errores)>0 and isset($this->array_errores[1])){ if($this->array_errores[1] == 1){ echo 'text-purple'; }else{ echo 'text-danger';  } } ?> ">
+                                        La contrase&ntilde;a debe contener al menos 8 car&aacute;cteres.
+                                    </p>
+                                </li>
+                                <li>
+                                    <p class="<?php if(count($this->array_errores)>0 and isset($this->array_errores[3])){ if($this->array_errores[3] == 1){ echo 'text-purple'; }else{ echo 'text-danger';  } } ?> ">
+                                        La clave debe tener al menos una letra min&uacute;scula
+                                    </p>
+                                </li>
+                                <li>
+                                    <p class="<?php if(count($this->array_errores)>0 and isset($this->array_errores[4])){ if($this->array_errores[4] == 1){ echo 'text-purple'; }else{ echo 'text-danger';  } } ?> ">
+                                        La clave debe tener al menos una letra may&uacute;scula
+                                    </p>
+                                </li>
+                                <li>
+                                    <p class="<?php if(count($this->array_errores)>0 and isset($this->array_errores[5])){ if($this->array_errores[5] == 1){ echo 'text-purple'; }else{ echo 'text-danger';  } } ?> ">
+                                        La clave debe tener al menos un caracter num&eacute;rico
+                                    </p>
+                                </li>
+                                <li>
+                                    <p class="<?php if(count($this->array_errores)>0 and isset($this->array_errores[6])){ if($this->array_errores[6] == 1){ echo 'text-purple'; }else{ echo 'text-danger';  } } ?> ">
+                                        La clave debe tener al menos un s&iacute;mbolo '&, =, ?, ! ...'
+                                    </p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer">				      		
+                        <input type="hidden" name="id_usu" value="<?php echo $this->cliente->get('id'); ?>" />
+                        <input type="hidden" name="set" value="2" />
+                        <button type="button" class="btn btn-personal" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" name="guardar"  class="btn btn-blue" >Cambiar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+<?php if($this->cliente->get('id') > 0){ ?>
+    <div class="modal fade" id="carga-cv" tabindex="-1" role="dialog" aria-labelledby="presentar-candidatura" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" ><i class="fa fa-address-card"></i> Adjuntar CV</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <form action="<?php echo $this->basePath('/backend/usuarios/cv') ?>" method="post" enctype="multipart/form-data" >
+                    <div class="modal-body">
+                        <div class="row ">
+                            <div class="col-12" >
+                                <div class="form-group" >
+                                    <label for="comentario" class="control-label">Adjuntar CV</label>
+                                    <input type="file" id="cv" name="cv" class="" required accept=".pdf,.doc,.docx" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer ">
+                        <input type="hidden" name="id_usu" value="<?php echo $this->cliente->get('id'); ?>" />
+                        <a href="#" data-dismiss="modal" type="button" class="btn btn-light" >Cancelar</a>
+                        <button type="submit" name="boton" value="buscar" class="btn btn-blue ">Adjuntar CV</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+<?php } ?>

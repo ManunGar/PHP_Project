@@ -1,0 +1,116 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 mb-2">
+            <div class="btn-toolbar float-right" aria-label="Barra de herramientas" role="toolbar" >
+                <div class="" aria-label="First group" role="group">
+                    <a title="Crear curso" href="<?php echo $this->basePath('/backend/formacion/curso') ?>" aria-label="Crear curso" class="btn btn-light" data-toggle="tooltip"><i class="fa fa-plus"></i></a>
+                    <a title="Buscar" href="#myModal" aria-label="Buscar" class="btn btn-light" data-toggle="modal" ><i class="fa fa-search"></i></a>
+                    <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                        <a title="Exportar a Excel" href="<?php echo $this->basePath('/backend/formacion/xlscursos/') ?>" aria-label="Exportar a Excel" class="btn btn-light" data-toggle="tooltip"><i class="fa fa-file-excel"></i></a>
+                    <?php } ?>
+                    <a title="Mostrar todo" href="<?php echo $this->basePath('/backend/formacion/cursos/' . $this->page . '/114') ?>" aria-label="Mostrar todo" class="btn btn-light" data-toggle="tooltip"><i class="fa fa-sync"></i></a>
+                </div>
+            </div>
+            <h1><i class="fa fa-book-open"></i> Cursos y jornadas (<?php echo $this->num; ?>)</h1>
+        </div>
+    </div>
+    <?php  Utilidades::muestraMensaje($this->ok,$this->ko); ?>
+</div>
+<?php if(count($this->cursos)){ ?> 
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="table-responsive mt-2 white" >
+                    <table class="table table-sm table-striped" >			
+                        <thead class="b-color_4 table-header ">
+                            <tr>
+                                <th class="table-col-1 text-center">ID</th>
+                                <th class="table-col-5">Nombre</th>
+                                <th class="table-col-1">Tipo</th>
+                                <th class="table-col-1">Estado</th>
+                                <th class="table-col-2">Horario</th>
+                                <th class="table-col-1 d-none">Ubicación</th>
+                                <th class="table-col-1 text-center">Opc.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach($this->cursos as $curso): ?>
+                                <tr>
+                                    <td class="text-center">
+                                        <a href="<?php echo $this->basePath('/backend/formacion/curso/' . $curso->get('id')) ?>" >
+                                            <span class="badge badge-<?php echo Utilidades::systemOptions('cursos', 'estado',2)[(int)$curso->get('estado')]; ?>"><?php echo str_pad($curso->get('id'), 5, '0', STR_PAD_LEFT); ?></span>
+                                        </a>
+                                    </td>
+                                    <td><a href="<?php echo $this->basePath('/backend/formacion/curso/' .  $curso->get('id')) ?>" title="Editar" class=""><?php echo $curso->get('nombre'); ?></a></td>
+                                    <td><?php echo Utilidades::systemOptions('cursos', 'tipo')[(int)$curso->get('tipo')]; ?></td>
+                                    <td><a href="<?php echo $this->basePath('/backend/formacion/curso/' .  $curso->get('id')) ?>" title="Editar" class=""><?php echo Utilidades::systemOptions('cursos', 'estado',1)[(int)$curso->get('estado')]; ?></a></td>
+                                    <td><?php echo $curso->get('horario'); ?></td>
+                                    <td><?php echo $curso->get('ubicacion'); ?></td>
+                                    <td class="text-center">
+                                        <a href="<?php echo $this->basePath('/backend/formacion/curso/' . $curso->get('id')) ?>" title="Editar" class="btn btn-light btn-sm" ><i class="fa fa-edit"></i></a>
+                                        <a href="<?php echo $this->basePath('/backend/formacion/borrarcurso/' . $curso->get('id')) ?>" title="Borrar" class="btn btn-light btn-sm red" onclick="return confirm('&iquest;Est&aacute; seguro que desea borrar el curso?')" ><i class="fa fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                    <?php Utilidades::muestraPaginacion($this->num, $this->page, $this->basePath('/backend/formacion/cursos/'),50) ?>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php } ?>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" ><i class="fa fa-search"></i> B&uacute;squeda de cursos</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form action="<?php echo $this->basePath('/backend/formacion/cursos') ?>" method="post" >
+                <div class="modal-body">
+                    <div class="row ">
+                        <div class="form-group col-12" >
+                            <label for="curs-nombre" class="control-label">Nombre</label>
+                            <input type="hidden" id="curs-nombre" name="id_cur" class="form-control curs-nombre" value="<?php echo (int)$this->buscador['id_cur']; ?>" />
+                        </div>
+                         <div class="form-group col-12" >
+                            <label for="curs-tipo" class="control-label">Tipo</label>
+                            <?php echo Utilidades::getSelect($this->buscador['tipo'],'cursos','tipo',0,0,1); ?>
+                        </div>
+                         <div class="form-group col-12" >
+                            <label for="curs-estado" class="control-label">Estado</label>
+                            <?php echo Utilidades::getSelect($this->buscador['estado'],'cursos','estado',0,0,1); ?>
+                        </div>
+                        <div class="form-group col-6" >
+                            <label for="curs-comienzoDesde" class="control-label">Comienzo (desde)</label>
+                            <input type="text" id="curs-comienzoDesde" name="comienzoDesde" class="form-control form-control-sm curs-comienzoDesde datepicker" value="<?php echo $this->buscador['comienzoDesde']; ?>" />
+                        </div>
+                        <div class="form-group col-6" >
+                            <label for="curs-comienzoHasta" class="control-label">Comienzo (hasta)</label>
+                            <input type="text" id="curs-comienzoHasta" name="comienzoHasta" class="form-control form-control-sm curs-comienzoHasta datepicker" value="<?php echo $this->buscador['comienzoHasta']; ?>" />
+                        </div>
+                        <div class="form-group col-6" >
+                            <label for="curs-finDesde" class="control-label">Fin (desde)</label>
+                            <input type="text" id="curs-finDesde" name="finDesde" class="form-control curs-finDesde datepicker" value="<?php echo $this->buscador['finDesde']; ?>" />
+                        </div>
+                        <div class="form-group col-6" >
+                            <label for="curs-finHasta" class="control-label">Fin (hasta)</label>
+                            <input type="text" id="curs-finHasta" name="finHasta" class="form-control curs-finHasta datepicker" value="<?php echo $this->buscador['finHasta']; ?>" />
+                        </div>
+                         <div class="form-group col-12" >
+                            <label for="cate-nombre-formacion" class="control-label">Categoría</label>
+                            <input type="hidden" id="cate-nombre-formacion" name="id_cat" class="form-control cate-nombre-formacion" value="<?php echo (int)$this->buscador['id_cat']; ?>" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer ">
+                    <a href="<?php echo $this->basePath('/backend/formacion/cursos/' . $this->page . '/114') ?>" type="button" class="btn btn-light" >Limpiar</a>
+                    <button type="submit" name="boton" value="buscar" class="btn btn-blue ">Buscar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,339 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<div class="">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 mb-2">
+                <div class="btn-toolbar float-right" aria-label="Barra de cursos" role="toolbar" >
+                    <div class="" aria-label="First group" role="group">
+                        <?php if($this->curso->get('id') > 0 && $this->curso->get('estado') > 0 && 0){ ?>
+                            <a title="Sincronizar con la web" href="<?php echo $this->basePath('/backend/formacion/sincronizacurso/' . $this->curso->get('id')); ?>" class="btn btn-light" data-toggle="tooltip"><i class="fa fa-share-alt"></i></a>
+                        <?php } ?>
+                        <?php if($this->curso->get('post_id') > 0){ ?>
+                            <a title="Ver en la web" href="<?php echo Utilidades::systemOptions('cursos','web').'/?p=' . $this->curso->get('post_id'); ?>" target="_blank" class="btn btn-light" data-toggle="tooltip"><i class="fa fa-link"></i></a>
+                        <?php } ?>
+                        <?php if($this->inscripcionesIncompletas > 0){ ?>
+                            <a title="Enviar e-mails de inscripción incompleta" href="<?php echo $this->basePath('/backend/formacion/inscripcionesincompletas/'.$this->curso->get('id')) ?>" aria-label="Enviar e-mails de inscripción incompleta" class="btn btn-warning" data-toggle="tooltip" ><i class="far fa-paper-plane"></i></a>
+                        <?php } ?>   
+                        <?php if($this->curso->get('id') > 0){ ?>
+                            <form id="generar-certificados"class="d-inline" action="<?php echo $this->basePath('/backend/formacion/generacerfificados') ?>" method="post" >
+                                <input type="hidden" name="id_cur" value="<?php echo $this->curso->get('id'); ?>" />
+                                <div class="d-none">
+                                </div>
+                                <button title="Generar/enviar certificados" type="submit" name="boton" value="buscar" class="btn btn-light generar-certificados" data-toggle="tooltip" ><i class="fa fa-file-signature"></i></button>
+                            </form>
+                        <?php } ?>
+                        <a title="Exportar inscritos a Excel" href="<?php echo $this->basePath('/backend/formacion/xlsinscritos/'.$this->curso->get('id')) ?>" aria-label="Exportar inscritos a Excel" class="btn btn-light" data-toggle="tooltip"><i class="fa fa-file-excel"></i></a>
+                        <a title="Marcar asistencia" href="#" id="check-assistance" aria-label="Marcar asistencia" class="btn btn-light" data-toggle="tooltip" ><i class="fa fa-check"></i></a>
+                        <a title="Volver" href="<?php echo $this->basePath('/backend/formacion/cursos/') ?>" aria-label="Volver" class="btn btn-light" data-toggle="tooltip" ><i class="fa fa-arrow-left"></i></a>
+                    </div>
+                </div>
+                <h1><i class="fa fa-book-open"></i> 
+                    <?php if($this->curso->get('id') > 0){ ?>
+                        Ficha del curso <span class="badge badge-<?php echo Utilidades::systemOptions('cursos', 'estado',2)[(int)$this->curso->get('estado')]; ?>"><?php echo $this->curso->get('nombre'); ?></span>
+                    <?php }else{ ?>
+                        Nuevo curso
+                    <?php } ?>
+                </h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <?php Utilidades::muestraMensaje($this->ok,$this->ko); ?>
+    <div class="row">
+        <div class="col-12">
+            <ul class="nav nav-tabs mt-2"  id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link <?php if($this->tab_curso == 'default'){ echo 'active'; } ?> " href="#default" aria-controls="pedidos" role="tab" data-toggle="tab">
+                        Datos
+                    </a>
+                </li>
+                 <?php if($this->curso->get('id') > 0){ ?>
+                <li class="nav-item">
+                    <a class="nav-link <?php if($this->tab_curso == 'inscripciones'){ echo 'active'; } ?> " href="#inscripciones" aria-controls="inscripciones" role="tab" data-toggle="tab">
+                        Inscripciones (<?php echo (int)$this->numi; ?>)
+                    </a>
+                </li>
+               <?php } ?>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade <?php if($this->tab_curso == 'default'){ echo 'show active'; } ?> " id="default" >
+                    <div class="row">
+                        <div class="col-12">
+                            <form class="wb" action="<?php echo $this->basePath('/backend/formacion/curso/'.$this->curso->get('id')) ?>" method="post">
+                                <div class="row mb-2">
+                                    <div class="col-12" >
+                                        <h2 class="text-blue font-weight-bold">Datos de gestión</h2>
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6 col-md-6" >
+                                        <label for="nombre" class="control-label">Nombre *</label>
+                                        <input type="text" id="nombre" name="nombre" class="form-control" value="<?php echo $this->curso->get('nombre'); ?>" />
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6 col-md-2">
+                                        <label for="colegiados">Tipo</label>
+                                        <?php echo Utilidades::getSelect($this->curso->get('tipo'),'cursos','tipo'); ?>
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6 col-md-2" >
+                                        <label for="id_cat" class="control-label">Categoría *</label>
+                                        <input type="hidden" id="cate-nombre-formacion" name="id_cat" class="form-control cate-nombre-formacion" value="<?php echo (int)$this->curso->get('id_cat'); ?>" />
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6 col-md-2" >
+                                        <label for="estado" class="control-label">Estado</label>
+                                        <?php echo Utilidades::getSelect((int)$this->curso->get('estado'),'cursos','estado'); ?>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-12" >
+                                        <h2 class="text-blue font-weight-bold">Datos inscripciones</h2>
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6 col-md-2">
+                                        <label for="colegiados">Solo para colegiados</label>
+                                        <?php echo Utilidades::getSelect($this->curso->get('colegiados'),'cursos','colegiados'); ?>
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6 col-md-2">
+                                        <label for="precio_col">Precio colegiado (€)</label>
+                                        <input type="text" id="precio_col" name="precio_col" class="form-control" value="<?php echo $this->curso->get('precio_col'); ?>" placeholder="0,00" />
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6 col-md-2">
+                                        <label for="precio_otr">Precio otros (€)</label>
+                                        <input type="text" id="precio_otr" name="precio_otr" class="form-control" value="<?php echo $this->curso->get('precio_otr'); ?>" placeholder="0,00" />
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6 col-md-2">
+                                        <label for="beca">Permite solicitar beca</label>
+                                        <?php echo Utilidades::getSelect($this->curso->get('beca'),'cursos','beca'); ?>
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6 col-md-2" >
+                                        <label for="post_id" class="control-label">ID (Wordpress)</label>
+                                        <input type="text" id="post_id" name="post_id" class="form-control" value="<?php echo $this->curso->get('post_id'); ?>" />
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6 col-md-2" >
+                                        <label for="publicacion" class="control-label">Publicación</label>
+                                        <input type="text" id="publicacion" name="publicacion" class="form-control datepicker" value="<?php echo $this->curso->get('publicacion'); ?>" readonly />
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-12" >
+                                        <h2 class="text-blue font-weight-bold">Datos principales</h2>
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6 col-md-2" >
+                                        <label for="comienzo" class="control-label">Comienzo</label>
+                                        <input type="text" id="comienzo" name="comienzo" class="form-control datepicker" value="<?php echo $this->curso->get('comienzo'); ?>" placeholder="dd-mm-YYYY" />
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6 col-md-2" >
+                                        <label for="fin" class="control-label">Fin</label>
+                                        <input type="text" id="fin" name="fin" class="form-control datepicker" value="<?php echo $this->curso->get('fin'); ?>" placeholder="dd-mm-YYYY" />
+                                    </div>
+                                    <div class="form-group col-12 col-sm-8" >
+                                       <label for="horario" class="control-label">Horario</label>
+                                       <input type="text" id="horario" name="horario" class="form-control" value="<?php echo $this->curso->get('horario'); ?>" placeholder="Ej:4, 6 y 7 de noviembre (16:30 – 20:30)" />
+                                    </div>
+                                    <div class="form-group col-12 col-sm-4" >
+                                        <label for="ubicacion" class="control-label">Ubicación</label>
+                                        <input type="text" id="ubicacion" name="ubicacion" class="form-control" value="<?php if((int)$this->curso->get('id')){ echo $this->curso->get('ubicacion'); }else{ echo Utilidades::systemOptions('cursos', 'ubicacion'); } ?>" />
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6" >
+                                        <label for="enlubi" class="control-label">Enlace a la ubicación</label>
+                                        <input type="text" id="enlubi" name="enlubi" class="form-control" value="<?php if((int)$this->curso->get('id')){ echo $this->curso->get('enlubi'); }else{ echo Utilidades::systemOptions('cursos', 'enlubi'); } ?>" />
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6 col-md-2" >
+                                        <label for="sincro" class="control-label">Última sincronización</label>
+                                        <input type="text" id="sincro" name="sincro" class="form-control datepicker" value="<?php echo $this->curso->get('sincro'); ?>" readonly />
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-12" >
+                                        <h2 class="text-blue font-weight-bold">Información ampliada</h2>
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6" >
+                                        <label for="descripcion" class="control-label">Descripción corta</label>
+                                        <textarea rows="5" type="text" id="descripcion" name="descripcion" class="form-control textarea" value="<?php echo $this->curso->get('descripcion'); ?>"><?php echo $this->curso->get('descripcion'); ?></textarea>
+                                    </div> 
+                                    <div class="form-group col-12 col-sm-6" >
+                                        <label for="dirigido" class="control-label">Público objetivo</label>
+                                        <textarea rows="5" type="text" id="dirigido" name="dirigido" class="form-control textarea" value="<?php echo $this->curso->get('dirigido'); ?>"><?php echo $this->curso->get('dirigido'); ?></textarea>
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6" >
+                                        <label for="objetivos" class="control-label">Presentación (objetivos)</label>
+                                        <textarea rows="15" type="text" id="objetivos" name="objetivos" class="form-control textarea" value="<?php echo $this->curso->get('objetivos'); ?>"><?php echo $this->curso->get('objetivos'); ?></textarea>
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6" >
+                                        <label for="programa" class="control-label">Programa</label>
+                                        <textarea rows="15" type="text" id="programa" name="programa" class="form-control textarea" value="<?php echo $this->curso->get('programa'); ?>" ><?php echo $this->curso->get('programa'); ?></textarea>
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6" >
+                                        <label for="dinamica" class="control-label">Dinámica</label>
+                                        <textarea rows="10" type="text" id="dinamica" name="dinamica" class="form-control textarea" value="<?php echo $this->curso->get('dinamica'); ?>"><?php echo $this->curso->get('dinamica'); ?></textarea>
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6" >
+                                        <label for="metodologia" class="control-label">Metodología</label>
+                                        <textarea rows="10" type="text" id="metodologia" name="metodologia" class="form-control textarea" value="<?php echo $this->curso->get('metodologia'); ?>"><?php echo $this->curso->get('metodologia'); ?></textarea>
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6">
+                                        <label for="profesorado">Profesorado</label>
+                                        <textarea rows="5" type="text" id="profesorado" name="profesorado" class="form-control textarea" value="<?php echo $this->curso->get('profesorado'); ?>"><?php echo $this->curso->get('profesorado'); ?></textarea>
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6">
+                                        <label for="precios">Precios</label>
+                                        <textarea rows="5" type="text" id="precios" name="precios" class="form-control textarea" value="<?php echo $this->curso->get('precios'); ?>"><?php echo $this->curso->get('precios'); ?></textarea>
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6">
+                                        <label for="informacion">Más información</label>
+                                        <textarea rows="5" type="text" id="informacion" name="informacion" class="form-control textarea" value="<?php echo $this->curso->get('informacion'); ?>"><?php echo $this->curso->get('informacion'); ?></textarea>
+                                    </div>
+                                    <div class="col-12" >
+                                        <h2 class="text-blue font-weight-bold">Certificados</h2>
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6">
+                                        <label for="informacion">Información del curso (pág. 1)</label>
+                                        <textarea rows="5" type="text" id="informacion_certificados" name="informacion_certificados" class="form-control" ><?php echo $this->curso->get('informacion_certificados'); ?></textarea>
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6">
+                                        <label for="resumen">Resumen del programa (pág. 2)</label>
+                                        <textarea rows="5" type="text" id="resumen" name="resumen" class="form-control" ><?php echo $this->curso->get('resumen'); ?></textarea>
+                                    </div>
+
+                                    <div class="form-group col-12" >
+                                        <input type="hidden" id="id_cur" name="id_cur" value="<?php echo $this->curso->get('id'); ?>"/>
+                                        <input type="hidden" id="no_sincronizar_web" name="no_sincronizar_web" value="<?php echo (int)$this->curso->get('no_sincronizar_web'); ?>"/>
+                                        <button type="submit" name="boton" value="guardar" class="btn btn-purple" style="position:fixed;bottom:20px;right:20px;z-index:9999">Guardar</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- Inscritos -->
+                <div role="tabpanel" class="tab-pane fade <?php if($this->tab_curso == 'inscripciones'){ echo 'show active'; } ?> " id="inscripciones" >
+                    <div class="row">
+                        <div class="col-12">
+                            <?php if((int)$this->numi){ ?>
+                            <form id="assistance" action="<?php echo $this->basePath('/backend/formacion/asistencia') ?>" method="post">
+                                <div class="table-responsive wb" >
+                                    <table class="table table-striped" >
+                                        <thead class="b-color_4 table-header ">
+                                            <tr>
+                                                <th class="table-col-1 text-center">Asistencia</th>
+                                                <th class="table-col-1">ID</th>
+                                                <th class="table-col-2">Usuario</th>
+                                                <th class="table-col-1">Importe</th>
+                                                <th class="table-col-1">Estado</th>
+                                                <th class="table-col-1">Pago</th>
+                                                <th class="table-col-1 text-center">Generar certificado</th>
+                                                <th class="table-col-1 text-center">Enviar certificado</th>
+                                                <th class="table-col-1 text-center">Certificado</th>
+                                                <th class="table-col-1 text-center">Opc.</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach($this->inscripciones as $inscripcion): ?>
+                                                <tr>
+                                                    <td class="text-center">
+                                                        <?php if($inscripcion['asistencia']){ ?>
+                                                            <i class="fa fa-check"></i>
+                                                        <?php }else{ ?>
+                                                            <input type="checkbox" data-toggle="toggle" data-on="<i class='fa fa-check'></i>" data-off="<i class='fa fa-times'></i>" data-onstyle="success" data-offstyle="secondary" data-size="sm" name="asistencia[<?php echo $inscripcion['id_ui']; ?>]" id="asistencia[<?php echo $inscripcion['id_ui']; ?>]" value="1"  />
+                                                        <?php } ?>
+                                                    </td>
+                                                    <td>
+                                                    <a href="<?php echo $this->basePath('/backend/formacion/inscripcion/' . $inscripcion['id_ins']) ?>" >
+                                                        <span class="badge badge-<?php echo Utilidades::systemOptions('inscripciones', 'estado',2)[(int)$inscripcion['estado']]; ?>"><?php echo str_pad($inscripcion['id_ins'], 5, '0', STR_PAD_LEFT); ?></span>
+                                                    </a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="<?php echo $this->basePath('/backend/usuarios/ficha/' . $inscripcion['id_usu']) ?>" title="Editar" class="">
+                                                            <?php echo $inscripcion['usuariosNombre']." ".$inscripcion['usuariosApellidos']; ?>
+                                                        </a>
+                                                        <?php
+                                                        if(!empty($inscripcion['telefono'])){
+                                                            echo '<br/><small>'.$inscripcion['telefono'].'</small>';
+                                                        }
+                                                        if(!empty($inscripcion['email'])){
+                                                            echo '<br/><small>'.$inscripcion['email'].'</small>';
+                                                        }
+                                                        ?>
+                                                    </td>
+                                                    <td class="text-left"><?php echo number_format($inscripcion['importe'],2,'.',',').'&euro;'; ?></td>
+                                                    <td><a href="<?php echo $this->basePath('/backend/formacion/inscripcion/' . $inscripcion['id_ins']) ?>" title="Editar" class="" ><?php echo Utilidades::systemOptions('inscripciones', 'estado',1)[$inscripcion['estado']]; ?></a></td>
+                                                    <td><?php echo Utilidades::systemOptions('inscripciones', 'pago')[$inscripcion['pago']]; ?></td>
+                                                    <td class="text-center">
+                                                        <input class="id_ui_generar" type="checkbox" data-toggle="toggle" data-on="<i class='fa fa-check'></i>" data-off="<i class='fa fa-times'></i>" data-onstyle="success" data-offstyle="secondary" data-size="sm" name="id_ui_generar[<?php echo $inscripcion['id_ui']; ?>]" id="id_ui_generar[<?php echo $inscripcion['id_ui']; ?>]" value="1"  />
+                                                    </td>
+
+                                                    <td class="text-center">
+                                                        <input class="id_ui_enviar" type="checkbox" data-toggle="toggle" data-on="<i class='fa fa-check'></i>" data-off="<i class='fa fa-times'></i>" data-onstyle="success" data-offstyle="secondary" data-size="sm" name="id_ui_enviar[<?php echo $inscripcion['id_ui']; ?>]" id="id_ui_enviar[<?php echo $inscripcion['id_ui']; ?>]" value="1"  />
+                                                        <?php if(!empty($inscripcion['envio_diploma'])){ ?>
+                                                            <br />
+                                                            <small class="display-block text-muted">Último envío <?php echo Utilidades::giraFecha($inscripcion['envio_diploma']); ?></small>
+                                                        <?php } ?>
+
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <?php if(!empty($inscripcion['diploma']) && file_exists(\Application\Model\Entity\Inscrito::FILE_DIRECTORY_DIPLOMA . $inscripcion['diploma'])){ ?>
+                                                            <a href="<?php echo $this->basePath(str_replace('./public', '', \Application\Model\Entity\Inscrito::FILE_DIRECTORY_DIPLOMA) . $inscripcion['diploma']); ?>" target="_blank" title="Descargar certificado" class="btn btn-light btn-sm" >
+                                                                <i class="fa fa-download"></i>
+                                                            </a>
+                                                            <a href="<?php echo $this->basePath('/backend/formacion/certificado/' . $this->curso->get('id') . '/' . $inscripcion['id_ui']) ?>" title="Borrar certificado" class="btn btn-light btn-sm" >
+                                                                <i class="fa fa-trash"></i>
+                                                            </a>
+                                                        <?php }else{ ?>
+                                                            <a href="#carga-certificado-<?php echo $inscripcion['id_ui']; ?>" data-toggle="modal" title="Subir certificado" class="btn btn-light btn-sm" >
+                                                                <i class="fa fa-upload"></i>
+                                                            </a>
+                                                        <?php } ?>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <a href="<?php echo $this->basePath('/backend/formacion/inscripcion/' . $inscripcion['id_ins']) ?>" title="Editar" class="btn btn-light btn-sm" ><i class="fa fa-edit"></i></a>
+                                                        <a href="<?php echo $this->basePath('/backend/formacion/borrarinscripcion/' . $inscripcion['id_ins']) ?>" title="Borrar" class="btn btn-light btn-sm red" onclick="return confirm('&iquest;Est&aacute; seguro que desea borrar el registro?')" ><i class="fa fa-trash"></i></a>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                    <?php Utilidades::muestraPaginacion($this->numi, $this->pagi, $this->basePath('/backend/formacion/curso/' . $this->curso->get('id').'/'),50) ?>
+                                </div>
+                                <input type="hidden" id="id_cur" name="id_cur" value="<?php echo $this->curso->get('id'); ?>"/>
+                            </form>
+                            <?php }else{ ?>
+                                <div class="table-responsive wb" >
+                                    <?php Utilidades::muestraMensaje(null, null, 'No hay ninguna inscripcion asociada a este curso.'); ?>
+                                </div>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php foreach($this->inscripciones as $inscripcion): ?>
+    <div class="modal fade" id="carga-certificado-<?php echo $inscripcion['id_ui']; ?>" tabindex="-1" role="dialog" aria-labelledby="presentar-candidatura" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" ><i class="fa fa-upload"></i> Subir certificado</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <form action="<?php echo $this->basePath('/backend/formacion/certificado') ?>" method="post" enctype="multipart/form-data" >
+                    <div class="modal-body">
+                        <div class="row ">
+                            <div class="col-12" >
+                                <div class="form-group" >
+                                    <label for="certificado" class="control-label">Adjuntar certificado</label>
+                                    <input type="file" id="certificado" name="certificado" class="" required accept=".pdf,.doc,.docx" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer ">
+                        <input type="hidden" name="id_ins" value="<?php echo $inscripcion['id_ui']; ?>" />
+                        <input type="hidden" id="id_cur" name="id_cur" value="<?php echo $this->curso->get('id'); ?>"/>
+                        <a href="#" data-dismiss="modal" type="button" class="btn btn-light" >Cancelar</a>
+                        <button type="submit" name="boton" value="buscar" class="btn btn-blue ">Subir</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+<?php endforeach; ?>

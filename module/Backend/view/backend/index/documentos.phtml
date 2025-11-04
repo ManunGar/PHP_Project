@@ -1,0 +1,22 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 mb-2">
+            <div class="btn-toolbar float-right" aria-label="Barra de herramientas" role="toolbar" >
+                <div class="" aria-label="First group" role="group">
+                </div>
+            </div>
+            <h1><i class="fa fa-folder-open"></i> Gestor documental</h1>
+        </div>
+    </div>
+    <?php Utilidades::muestraMensaje($this->ok,$this->ko); ?>
+</div>
+
+<div class="container-fluid">
+    <div class="row mt-20">
+        <div class="col-12">
+            <div id="elfinder" class="row"></div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,104 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<div class="container mt-4 resumen-inscripcion">
+    <div class="row">
+        <div class="col-12">
+            <h1><i class="fa fa-edit"></i> Inscripción a evento infantil</h1>
+        </div>
+    </div>
+    <?php Utilidades::muestraMensaje($this->ok,$this->ko); ?>
+    <div class="row">
+        <div class="col-12">
+            <form class="wb bt-1 bd-5 mt-2" action="<?php echo $this->basePath('/backend/inscripciones/eventoinfantil') ?>" method="post">
+                <div class="row">
+                    <div class="col-12" >
+                        <h2 class="text-blue font-weight-bold"><?php echo $this->curso->get('nombre'); ?></h2>
+                        <p><?php echo $this->usuario->get('estimado-nombre'); ?>, le rogamos indique quiénes asistirán al evento. En caso de que sea la primera vez que participan en un evento del Colegio, deberá darlos de alta pulsando el botón de "Añadir niño / niña". Muchas gracias por su interés.</p>
+                        <?php
+                        foreach($this->menores as $menor):
+                        ?>
+                            <div class="form-group" >
+                                <input type="checkbox" data-toggle="toggle" data-on="<i class='fa fa-check'></i>" data-off="<i class='fa fa-times'></i>" data-onstyle="success" data-offstyle="secondary" data-size="sm" name="id_men[<?php echo $menor->get('id') ?>]" id="id_men[<?php echo $menor->get('id') ?>]" />
+                                <label for="id_men[<?php echo $menor->get('id') ?>]"><?php echo $menor->get('nombre') . ' ' . $menor->get('apellidos'); ?></label>
+                            </div>
+                        <?php
+                        endforeach;
+                        ?>
+                    </div>
+                    <div id="participants-container" class="col-12 d-none">
+                        <div class="table-responsive mt-2 white" >
+                            <table class="table table-sm table-striped" >
+                                <thead class="b-color_4 table-header ">
+                                <tr>
+                                    <th class="table-col-3">Nombre</th>
+                                    <th class="table-col-3">Apellidos</th>
+                                    <th class="table-col-2">Nacimiento</th>
+                                    <th class="table-col-3">Observaciones</th>
+                                    <th class="table-col-1 text-center">Opc.</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 mt-4" >
+                        <div class="form-group" >
+                            <input type="hidden" name="id_cur" value="<?php echo $this->curso->get('id') ?>" />
+                            <button type="submit" name="boton" value="guardar" class="btn btn-purple float-right">Terminar inscripción</button>
+                            <a href="#add-child" data-toggle="modal" class="btn btn-blue float-left mr-2">Añadir niño / niña</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="add-child" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" ><i class="fa fa-child"></i> Datos del menor</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form id="add-child-form" class="wb" action="#" method="post">
+                <div class="row">
+                    <div class="col-12 " >
+                        <div class="row">
+                            <div id="test" class="form-group col-12 col-sm-6" >
+                                <label for="nombre" class="control-label">Nombre</label>
+                                <input type="text" id="nombre" name="nombre[]" class="form-control" value="" required/>
+                            </div>
+                            <div class="form-group col-12 col-sm-6" >
+                                <label for="apellidos" class="control-label">Apellidos</label>
+                                <input type="text" id="apellidos" name="apellidos[]" class="form-control" value="" />
+                            </div>
+                            <div class="form-group col-12 col-sm-6" >
+                                <label for="nacimiento" class="control-label">Fecha de nacimiento</label>
+                                <input type="text" id="nacimiento" name="nacimiento[]" class="form-control datepicker" value="" required />
+                            </div>
+                            <div class="form-group col-12 col-sm-6 d-none" >
+                                <label for="observaciones" class="control-label">Observaciones</label>
+                                <input id="observaciones" name="observaciones[]" class="form-control" />
+                            </div>
+                            <div class="col-12 col-sm-6 d-none">
+                                <a href="#" title="Borrar" class="btn btn-danger remove-child" ><i class="fa fa-trash"></i></a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12" >
+                                <div class="form-group" >
+                                    <input type="hidden" name="id_cur" value="<?php echo $this->curso->get('id') ?>" />
+                                    <button id="add-child" type="submit" name="boton" value="guardar" class="btn btn-blue float-right">Añadir menor</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

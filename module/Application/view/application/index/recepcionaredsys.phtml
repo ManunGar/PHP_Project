@@ -1,0 +1,12 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-md-8 offset-md-2">
+            <h1><i class="fa fa-credit-card"></i> Realización del pago para el <?php echo Utilidades::systemOptions('cursos','tipo',1)[(int)$this->curso->get('tipo')] . ': ' . $this->curso->get('nombre'); ?></h1>
+        </div>
+        <div class="col-xs-12 col-md-8 offset-md-2">
+            <?php Utilidades::muestraMensaje($this->ok,$this->ko,null,null,null,false); ?>
+        </div>
+    </div>
+</div>
+

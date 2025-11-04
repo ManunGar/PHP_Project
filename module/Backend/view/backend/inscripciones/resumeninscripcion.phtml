@@ -1,0 +1,136 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12 col-md-6 offset-md-3">
+            <div class="btn-toolbar float-right" aria-label="Barra de herramientas" role="toolbar" >
+                <div class="" aria-label="First group" role="group">
+                </div>
+            </div>
+            <h1><i class="fa fa-edit"></i> Resumen de la inscripción </h1>
+        </div>
+    </div>
+    <?php Utilidades::muestraMensaje($this->ok,$this->ko,null,null,' col-md-6 offset-md-3'); ?>
+</div>
+<div class="container resumen-inscripcion">
+    <?php
+        if(count($this->inscritos) > 0) {
+        ?>
+    <div class="row">
+        <div class="col-12 col-md-6 offset-md-3">
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade show active" id="default" >
+                    <div class="row">
+                        <div class="col-12">
+                            <form class="wb" action="<?php echo $this->basePath('/backend/inscripciones/resumeninscripcion') ?>" method="post">
+                                <div class="row">
+                                    <div class="col-12 mt-2" >
+                                        <h2 class="text-blue font-weight-bold"><?php echo $this->curso->get('nombre'); ?></h2>
+                                        <p>Tipo de evento: <?php echo Utilidades::systemOptions('cursos', 'tipo', 1)[(int)$this->curso->get('tipo')]; ?></p>
+                                        <?php if(!empty($this->curso->get('horario'))){ ?>
+                                            <p>Horario: <?php echo $this->curso->get('horario'); ?></p>
+                                        <?php } ?>
+                                    </div> 
+                                    <div class="col-12 mt-2" >
+                                        <p><b>Inscritos:</b></p>
+                                        <ul class="list-unstyled">
+                                        <?php
+                                        $importe = 0;
+                                        foreach($this->inscritos as $trabajador):
+                                            $importe += $trabajador['importe'];
+                                            if($this->curso->get('tipo') == 2){ ?>
+                                                <li><i class="fa fa-child"></i> <?php echo $trabajador['menoresNombre'] . ' ' . $trabajador['menoresApellidos']; ?></li>
+                                            <?php }else{ ?>
+                                                <li><i class="fa fa-user"></i> <?php echo $trabajador['usuariosNombre'] . ' ' . $trabajador['usuariosApellidos']; ?></li>
+                                            <?php } 
+                                        endforeach; ?>
+                                        </ul>
+                                    </div>
+                                    <?php if($importe > 0){ ?>
+                                        <div class="col-12 mt-2" >
+                                            <div class="row">
+                                                <div class="col-12" >
+                                                    <p><b>Datos de facturación:</b></p>
+                                                </div>
+                                                <?php if($this->inscripcion->get('id_emp') == 0){ ?>
+                                                    <div class="form-group col-12 col-sm-6 col-md-6" >
+                                                        <label for="nombre" class="control-label">Nombre *</label>
+                                                        <input type="text" id="nombre" name="nombre" class="form-control" value="<?php echo $this->inscripcion->get('nombre'); ?>" required />
+                                                    </div>
+                                                    <div class="form-group col-12 col-sm-6 col-md-6" >
+                                                        <label for="cif" class="control-label">CIF/DNI *</label>
+                                                        <input type="text" id="cif" name="cif" class="form-control" value="<?php echo $this->inscripcion->get('cif'); ?>" required />
+                                                    </div>
+                                                    <div class="form-group col-12 col-sm-6" >
+                                                        <label for="direccion" class="control-label">Dirección</label>
+                                                        <textarea type="text" id="direccion" name="direccion" class="form-control textarea" required ><?php echo $this->inscripcion->get('direccion'); ?></textarea>
+                                                    </div>
+                                                    <div class="form-group col-12 col-sm-6 col-md-6" >
+                                                        <label for="cp" class="control-label">CP</label>
+                                                        <input type="text" maxlength="9" id="cp" name="cp" class="form-control" value="<?php echo $this->inscripcion->get('cp'); ?>" required />
+                                                    </div>
+                                                    <div class="form-group col-12 col-sm-6 col-md-6" >
+                                                        <label for="localidad" class="control-label">Localidad</label>
+                                                        <input type="text" id="localidad" name="localidad" class="form-control" value="<?php echo $this->inscripcion->get('localidad'); ?>" required />
+                                                    </div>
+                                                    <div class="form-group col-12 col-sm-6 col-md-6" >
+                                                        <label for="provincia" class="control-label">Provincia</label>
+                                                        <input type="text" id="provincia" name="provincia" class="form-control" value="<?php echo $this->inscripcion->get('provincia'); ?>" required />
+                                                    </div>
+                                                <?php } ?>
+                                                <div class="form-group col-12 col-sm-6 col-md-6" >
+                                                    <label for="nombre_empresa" class="control-label">Razón social <i>(empresa)</i></label>
+                                                    <input type="text" id="nombre_empresa" name="nombre_empresa" class="form-control" value="<?php echo $this->inscripcion->get('nombre_empresa')??$this->empresa->get('razonsocial'); ?>" <?php echo ((int)$this->inscripcion->get('id_emp'))?'required':''; ?> />
+                                                </div>
+                                                <div class="form-group col-12 col-sm-6 col-md-6" >
+                                                    <label for="cif_empresa" class="control-label">CIF <i>(empresa)</i></label>
+                                                    <input type="text" id="cif_empresa" name="cif_empresa" class="form-control" value="<?php echo $this->inscripcion->get('cif_empresa')??$this->empresa->get('cif'); ?>" <?php echo ((int)$this->inscripcion->get('id_emp'))?'required':''; ?> />
+                                                </div>
+                                                <div class="form-group col-12 col-sm-6" >
+                                                    <label for="direccion_empresa" class="control-label">Dirección <i>(empresa)</i></label>
+                                                    <textarea type="text" id="direccion_empresa" name="direccion_empresa" class="form-control textarea" <?php echo ((int)$this->inscripcion->get('id_emp'))?'required':''; ?> ><?php echo $this->inscripcion->get('direccion_empresa')??$this->empresa->get('direccion'); ?></textarea>
+                                                </div>
+                                                <div class="form-group col-12 col-sm-6 col-md-6" >
+                                                    <label for="cp_empresa" class="control-label">CP <i>(empresa)</i></label>
+                                                    <input type="text" maxlength="9" id="cp_empresa" name="cp_empresa" class="form-control" value="<?php echo $this->inscripcion->get('cp_empresa')??$this->empresa->get('cp'); ?>" <?php echo ((int)$this->inscripcion->get('id_emp'))?'required':''; ?> />
+                                                </div>
+                                                <div class="form-group col-12 col-sm-6 col-md-6" >
+                                                    <label for="localidad_empresa" class="control-label">Localidad <i>(empresa)</i></label>
+                                                    <input type="text" id="localidad_empresa" name="localidad_empresa" class="form-control" value="<?php echo $this->inscripcion->get('localidad_empresa')??$this->empresa->get('localidad'); ?>" <?php echo ((int)$this->inscripcion->get('id_emp'))?'required':''; ?> />
+                                                </div>
+                                                <div class="form-group col-12 col-sm-6 col-md-6" >
+                                                    <label for="provincia_empresa" class="control-label">Provincia <i>(empresa)</i></label>
+                                                    <input type="text" id="provincia_empresa" name="provincia_empresa" class="form-control" value="<?php echo $this->inscripcion->get('provincia_empresa')??$this->empresa->get('provincia'); ?>" <?php echo ((int)$this->inscripcion->get('id_emp'))?'required':''; ?> />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    
+                                        <div class="col-12 mt-2">
+                                            <p>Precio total: <span class="badge badge-blue font-100" ><?php echo number_format($importe, 2,',','.'); ?> €</span></p>
+                                            <?php if($this->curso->get('tipo') == 0 && (int)$this->curso->get('beca') && $this->inscripcion->get('id_emp') == 0){ ?>
+                                                <div class="form-group" >
+                                                    <label for="beca">¿Desea solicitar una beca?</label>
+                                                    <input type="checkbox" data-toggle="toggle" data-on="<i class='fa fa-check'></i>" data-off="<i class='fa fa-times'></i>" data-onstyle="success" data-offstyle="secondary" data-size="sm" name="beca" id="beca" value="1" <?php if($this->inscripcion->get('beca')){ echo 'checked'; } ?> />
+                                                </div>
+                                            <?php } ?> 
+                                        </div>
+                                    <?php } ?>  
+                                </div>
+                                <div class="row">
+                                    <div class="col-12" >
+                                        <div class="form-group" >
+                                            <input type="hidden" name="id_ins" value="<?php echo $this->inscripcion->get('id'); ?>" />
+                                            <input type="hidden" name="existe" value="<?php echo $this->existe; ?>" />
+                                            <button type="submit" name="boton" value="guardar" class="btn btn-purple float-right">Confirmar inscripción</button>
+                                            <a href="<?php echo $this->basePath('/backend/inscripciones/cancelar/'.$this->inscripcion->get('id')) ?>" class="btn btn-light float-right mr-2">Cancelar</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php }?>
+</div>

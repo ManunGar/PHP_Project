@@ -1,0 +1,72 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<div class="container mt-4 resumen-inscripcion">
+    <div class="row mb-4">
+        <div class="col-12">
+            <?php Utilidades::muestraMensaje($this->ok,$this->ko); ?>
+        </div>
+    </div>
+    <?php if($this->inscripcion->get('id') > 0) { ?>
+        <div class="row">
+            <div class="col-12 col-md-6 offset-md-3">
+                <div class="row">
+                    <div class="col-12">
+                        <h1><i class="fa fa-edit"></i> Adjuntar justificante de transferencia</h1>
+                    </div>
+                </div>
+                <div class="wb bt-1 bd-5 mt-2">
+                    <div class="row">
+                        <div class="col-12">
+                            <h2 class="text-blue font-weight-bold"><?php echo $this->curso->get('nombre'); ?></h2>
+                            <p>Tipo de evento: <?php echo Utilidades::systemOptions('cursos','tipo',0)[(int)$this->curso->get('tipo')]; ?></p>
+                            <?php if(!empty($this->curso->get('horario'))){ ?>
+                                <p>Horario: <?php echo $this->curso->get('horario'); ?></p>
+                            <?php } ?>
+                            <p>Inscripción realizada por <?php echo $this->usuario->get('nombre') .  ' ' . $this->usuario->get('apellidos'); ?></p>
+                        </div>
+                        <div class="col-12">
+                            <p>Precio total: <span class="badge badge-blue font-100" ><?php echo number_format($this->inscripcion->get('total'), 2, ',', '.') . ' €'; ?></span></p>
+                        </div>
+                        <?php if((empty($this->inscripcion->get('justificante_pago')) || (!empty($this->inscripcion->get('justificante_pago')) && !file_exists(\Application\Model\Entity\Inscripcion::FILE_DIRECTORY_JUSTIFICANTE . $this->inscripcion->get('justificante_pago'))))
+                        && $this->inscripcion->get('pago') != 1){ ?>
+                            <div class="col-12 col-md-6 mt-4 offset-md-3">
+                                <a class="btn btn-purple w-100 text-center radius-0 py-4" href="#carga-justificante" aria-label="Adjuntar" data-toggle="modal" >
+                                    <i class="fa fa-file-upload fa-5x d-block align-center"></i>
+                                    Adjuntar justificante
+                                </a>
+                                <div class="modal fade" id="carga-justificante" tabindex="-1" role="dialog" aria-labelledby="cargar-justificante" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" ><i class="fa fa-file-upload"></i> Adjuntar justificante de pago</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            </div>
+                                            <form action="<?php echo $this->basePath('/justificante-pago/' . Utilidades::encriptaIdCurso($this->inscripcion->get('id'), 'enc')) ?>" method="post" enctype="multipart/form-data" >
+                                                <div class="modal-body">
+                                                    <div class="row ">
+                                                        <div class="col-12" >
+                                                            <div class="form-group" >
+                                                                <label for="comentario" class="control-label">Adjuntar justificante</label>
+                                                                <input type="file" id="justificante_pago" name="justificante_pago" class="" required accept=".pdf,.doc,.docx,.jpg,.png,.jpeg" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer ">
+                                                    <input type="hidden" name="id_ins" value="<?php echo $this->inscripcion->get('id'); ?>" />
+                                                    <a href="#" data-dismiss="modal" type="button" class="btn btn-light" >Cancelar</a>
+                                                    <button type="submit" name="boton" value="buscar" class="btn btn-blue ">Adjuntar justificante</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php } ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+
+    <?php } ?>
+</div>

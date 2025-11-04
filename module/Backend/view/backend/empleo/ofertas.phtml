@@ -1,0 +1,110 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<div class="container">
+    <div class="row">
+        <div class="col-12 mb-2">
+            <div class="btn-toolbar float-right" aria-label="Barra de herramientas" role="toolbar" >
+                <div class="" aria-label="First group" role="group">
+                    <a title="Crear oferta" href="<?php echo $this->basePath('/backend/empleo/oferta') ?>" aria-label="Crear oferta" class="btn btn-light" data-toggle="tooltip"><i class="fa fa-plus"></i></a>
+                    <a title="Buscar" href="#myModal" aria-label="Buscar" class="btn btn-light" data-toggle="modal" ><i class="fa fa-search"></i></a>
+                    <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                        <a title="Exportar a Excel" href="<?php echo $this->basePath('/backend/empleo/xlsofertas/') ?>" aria-label="Exportar a Excel" class="btn btn-light" data-toggle="tooltip"><i class="fa fa-file-excel"></i></a>
+                    <?php } ?>
+                    <a title="Mostrar todo" href="<?php echo $this->basePath('/backend/empleo/ofertas/' . $this->page . '/114') ?>" aria-label="Mostrar todo" class="btn btn-light" data-toggle="tooltip"><i class="fa fa-sync"></i></a>
+                </div>
+            </div>
+            <h1><i class="fa fa-bullhorn"></i> Ofertas (<?php echo $this->num; ?>)</h1>
+        </div>
+    </div>
+    <?php Utilidades::muestraMensaje($this->ok,$this->ko); ?>
+</div>
+<?php if(count($this->ofertas)){ ?> 
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="table-responsive mt-2 white" >
+                    <table class="table table-sm table-striped" >			
+                        <thead class="b-color_4 table-header ">
+                            <tr>
+                                <th class="table-col-1 text-center">ID</th>
+                                <th class="table-col-2">Título</th>
+                                <th class="table-col-2">Estado</th>
+                                <th class="table-col-1 text-center">Publicación</th>
+                                <th class="table-col-1 text-center">Plazas</th>
+                                <th class="table-col-2">Empresa</th>
+                                <th class="table-col-2">Sector</th>
+                                <th class="table-col-1 text-center">Opc.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach($this->ofertas as $oferta): ?>
+                                <tr>
+                                    <td class="text-center">
+                                        <a href="<?php echo $this->basePath('/backend/empleo/oferta/' . $oferta['id_ofe']) ?>" title="" class="">
+                                            <span class="badge badge-<?php echo Utilidades::systemOptions('ofertas', 'estado',2)[(int)$oferta['estado']]; ?>"><?php echo str_pad($oferta['id_ofe'],5,'0',STR_PAD_LEFT); ?></span>
+                                        </a>
+                                    </td>
+                                    <td><a href="<?php echo $this->basePath('/backend/empleo/oferta/' . $oferta['id_ofe']) ?>" title="" class=""><?php echo $oferta['titulo']; ?></a></td>
+                                    <td><a href="<?php echo $this->basePath('/backend/empleo/oferta/' . $oferta['id_ofe']) ?>" title="" class="" ><?php echo Utilidades::systemOptions('ofertas', 'estado',1)[$oferta['estado']]; ?></a></td>
+                                    <td class="text-center"><?php echo Utilidades::giraFecha($oferta['fecha']); ?></td>
+                                    <td class="text-center"><?php echo $oferta['plazas']; ?></td>
+                                    <td><a href="<?php echo $this->basePath('/backend/empresas/ficha/' . $oferta['id_emp']) ?>" title="" class=""><?php echo $oferta['empresasNombre']; ?></a></td>
+                                    <td><?php echo $oferta['sectoresNombre']; ?></td>
+                                    <td class="text-center">
+                                        <a href="<?php echo $this->basePath('/backend/empleo/oferta/' . $oferta['id_ofe']) ?>" title="Editar" class="btn btn-light btn-sm" ><i class="fa fa-edit"></i></a>
+                                        <a href="<?php echo $this->basePath('/backend/empleo/borraroferta/' . $oferta['id_ofe']) ?>" title="Borrar" class="btn btn-light btn-sm red" onclick="return confirm('&iquest;Est&aacute; seguro que desea borrar la oferta?')" ><i class="fa fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                    <?php Utilidades::muestraPaginacion($this->num, $this->page, $this->basePath('/backend/empleo/ofertas/'),50) ?>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php } ?>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" ><i class="fa fa-search"></i> B&uacute;squeda de ofertas</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form action="<?php echo $this->basePath('/backend/empleo/ofertas') ?>" method="post" >
+                <div class="modal-body">
+                    <div class="row ">
+                        <div class="form-group col-12" >
+                            <label for="ofer-nombre" class="control-label">Nombre</label>
+                            <input type="hidden" id="ofer-nombre" name="id_ofe" class="form-control ofer-nombre" value="<?php echo (int)$this->buscador['id_ofe']; ?>" />
+                        </div>
+                        <div class="form-group col-12" >
+                            <label for="ofer-estado" class="control-label">Estado</label>
+                            <?php echo Utilidades::getSelect($this->buscador['estado'],'ofertas','estado',0,0,1); ?>
+                        </div>
+                        <div class="form-group col-6" >
+                            <label for="ofer-fechaDesde" class="control-label">Fecha (desde)</label>
+                            <input type="text" id="ofer-fechaDesde" name="fechaDesde" class="form-control form-control-sm ofer-fechaDesde datepicker" value="<?php echo $this->buscador['fechaDesde']; ?>" />
+                        </div>
+                        <div class="form-group col-6" >
+                            <label for="ofer-fechaHasta" class="control-label">Fecha (hasta)</label>
+                            <input type="text" id="ofer-fechaHasta" name="fechaHasta" class="form-control form-control-sm ofer-fechaHasta datepicker" value="<?php echo $this->buscador['fechaHasta']; ?>" />
+                        </div>
+                        <div class="form-group col-12" >
+                            <label for="empr-nombre" class="control-label">Empresa</label>
+                            <input type="hidden" id="empr-nombre" name="id_emp" class="form-control empr-nombre" value="<?php echo $this->buscador['id_emp']; ?>" />
+                        </div>
+                        <div class="form-group col-12" >
+                            <label for="sec-nombre" class="control-label">Sector</label>
+                            <input type="hidden" id="sec-nombre" name="id_sec" class="form-control sec-nombre" value="<?php echo (int)$this->buscador['id_sec']; ?>" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer ">
+                    <a href="<?php echo $this->basePath('/backend/empleo/ofertas/' . $this->page . '/114') ?>" type="button" class="btn btn-light" >Limpiar</a>
+                    <button type="submit" name="boton" value="buscar" class="btn btn-blue ">Buscar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

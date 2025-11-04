@@ -1,0 +1,98 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<div class="container">
+    <div class="row">
+        <div class="col-12 mb-2">
+            <div class="btn-toolbar float-right" aria-label="Barra de herramientas" role="toolbar" >
+                <div class="" aria-label="First group" role="group">
+                    <a title="Buscar" href="#myModal" aria-label="Buscar" class="btn btn-light" data-toggle="modal" ><i class="fa fa-search"></i></a>
+                    <a title="Mostrar todo" href="<?php echo $this->basePath('/backend/empleo/sectores/' . $this->page . '/114') ?>" aria-label="Mostrar todo" class="btn btn-light" data-toggle="tooltip"><i class="fa fa-sync"></i></a>
+                </div>
+            </div>
+            <h1><i class="fa fa-city"></i> Sectores (<?php echo $this->num; ?>)</h1>
+        </div>
+    </div>
+    <?php Utilidades::muestraMensaje($this->ok,$this->ko); ?>
+</div>
+<form id="ppal" action="<?php echo $this->basePath() ?>/backend/empleo/sectores" method="post" >
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="table-responsive mt-2 white" >
+                    <table class="table table-striped" >			
+                        <thead class="b-color_4 table-header ">
+                            <tr>
+                                <th class="table-col-1 text-center">ID</th>
+                                <th class="table-col-9">Nombre</th>
+                                <th class="table-col-2 text-center">Opc.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $id_obj = 0; ?>
+                            <tr>
+                                <td class="text-center">0000</td>
+                                <td>
+                                    <input class="form-control form-control-sm" type="text" name="nombre[<?php echo $id_obj; ?>]" value="" placeholder="Nuevo sector" />
+                                    <input type="hidden" name="id_sec[<?php echo $id_obj; ?>]" value="<?php echo $id_obj; ?>"/>
+                                </td>
+                                <td class="text-center">
+                                    <button type="submit" name="boton" value="<?php echo $id_obj; ?>" class="btn btn-light btn-sm" title="Guardar este registro">
+                                        <i class="fa fa-save"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <?php 
+                            foreach($this->sectores as $sector): 
+                                $id_obj = (int)$sector->get('id');
+                                ?>
+                                <tr>
+                                    <td class="text-center"><?php echo str_pad($sector->get('id'),4,'0',STR_PAD_LEFT); ?></td>
+                                    <td>
+                                        <input class="form-control form-control-sm" type="text" name="nombre[<?php echo $id_obj; ?>]" value="<?php echo $sector->get('nombre'); ?>" required />
+                                        <input type="hidden" name="id_sec[<?php echo $id_obj; ?>]" value="<?php echo $id_obj; ?>"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="submit" name="boton" value="<?php echo $id_obj; ?>" class="btn btn-light btn-sm" title="Guardar este registro">
+                                            <i class="fa fa-save"></i>
+                                        </button>
+                                        <a href="<?php echo $this->basePath('/backend/empleo/borrarsector/' . $sector->get('id')) ?>" title="Borrar" class="btn btn-light btn-sm red" onclick="return confirm('&iquest;Est&aacute; seguro que desea borrar el registro?')" ><i class="fa fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                    <?php Utilidades::muestraPaginacion($this->num, $this->page, $this->basePath('/backend/empleo/sectores/'),50) ?>
+                </div>
+            </div>
+            <div class="col-12">
+                <button type="submit" name="boton" value="guardar-todos" class="btn btn-purple float-right">
+                    <i class="fa fa-save"></i> Guardar todos
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" ><i class="fa fa-search"></i> B&uacute;squeda de sectores</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form action="<?php echo $this->basePath('/backend/empleo/sectores') ?>" method="post" >
+                <div class="modal-body">
+                    <div class="row ">
+                        <div class="form-group col-12" >
+                            <label for="sec-nombre" class="control-label">Nombre</label>
+                            <input type="hidden" id="sec-nombre" name="id_sec" class="form-control sec-nombre" value="<?php echo (int)$this->buscador['id_sec']; ?>" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer ">
+                    <a href="<?php echo $this->basePath('/backend/empleo/sectores/' . $this->page . '/114') ?>" type="button" class="btn btn-light" >Limpiar</a>
+                    <button type="submit" name="boton" value="buscar" class="btn btn-blue ">Buscar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

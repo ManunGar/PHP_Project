@@ -1,0 +1,48 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<div class="container mt-4 resumen-inscripcion">
+    <?php Utilidades::muestraMensaje($this->ok,$this->ko); ?>
+    <?php if($this->inscripcion->get('id') > 0) { ?>
+        <div class="row">
+            <div class="col-12 col-md-6 offset-md-3">
+                <div class="row">
+                    <div class="col-12">
+                        <h1><i class="fa fa-edit"></i> Pago de la inscripción</h1>
+                    </div>
+                </div>
+                <div class="wb bt-1 bd-5 mt-2">
+                    <div class="row">
+                        <div class="col-12">
+                            <h2 class="text-blue font-weight-bold"><?php echo $this->curso->get('nombre'); ?></h2>
+                            <p>Tipo de evento: <?php echo Utilidades::systemOptions('cursos','tipo',0)[(int)$this->curso->get('tipo')]; ?></p>
+                            <?php if(!empty($this->curso->get('horario'))){ ?>
+                                <p>Horario: <?php echo $this->curso->get('horario'); ?></p>
+                            <?php } ?>
+                            <p>Inscripción realizada por <?php echo $this->usuario->get('nombre') .  ' ' . $this->usuario->get('apellidos'); ?></p>
+                        </div>
+                        <div class="col-12">
+                            <p>Precio total: <span class="badge badge-blue font-100" ><?php echo number_format($this->inscripcion->get('total'), 2, ',', '.') . ' €'; ?></span></p>
+                        </div>
+                        <div class="col-12 col-md-6 mt-4">
+                            <form name="frm" action="<?php echo $this->urlpago; ?>" method="POST" target="_blank">
+                                <input type="hidden" name="Ds_SignatureVersion" value="<?php echo $this->version; ?>"/>
+                                <input type="hidden" name="Ds_MerchantParameters" value="<?php echo $this->params; ?>"/>
+                                <input type="hidden" name="Ds_Signature" value="<?php echo $this->signature; ?>"/>
+                                <button type="submit" class="btn btn-purple w-100 text-center radius-0 py-4" >
+                                    <i class="fa fa-credit-card fa-5x d-block align-center"></i>
+                                    Ir a la pasarela de pago
+                                </button>
+                            </form>
+                        </div>
+                        <div class="col-12 col-md-6 mt-4">
+                            <div class="alert alert-info" role="alert">
+                                Recuerde pulsar el botón de "Continuar" tras realizar el pago. El proceso de pago termina cuando le aparece el mensaje de "Pago completado" en nuestra web.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+
+    <?php } ?>
+</div>

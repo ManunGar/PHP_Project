@@ -1,0 +1,154 @@
+<nav class="navbar navbar-expand-lg navbar-light">
+    <a class="navbar-brand" href="<?php echo $this->basePath('/backend/index') ?>">
+        <img class="img-fluid logo" src="<?php echo $this->basePath('/assets/images/coiiaoc.png')?>" alt="Colegio Oficial de Ingenieros Industriales de Andalucía Occidental" />
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto menu">
+            <?php if($this->usuario_session->get('rol') == '4dmin'){ ?>
+                <li class="nav-item <?php if(($this->controller == 'Backend\Controller\Index')){ echo 'active'; } ?>" >
+                    <a class="nav-link" href="<?php echo $this->basePath('/backend/index') ?>" >
+                        <i class="fa fa-home"></i> Inicio
+                    </a>
+                </li>
+                <li class="nav-item dropdown <?php if(($this->controller == 'Backend\Controller\Formacion')){ echo 'active'; } ?>">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownFormacion" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-graduation-cap"></i> Formación
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownFormacion">
+                        <a class="dropdown-item <?php if(($this->controller == 'Backend\Controller\Formacion') && ($this->action == 'cursos' || $this->action == 'curso')){ echo 'active'; } ?>" href="<?php echo $this->basePath('/backend/formacion/cursos') ?>"><i class="fa fa-book-open"></i> Cursos</a>
+                        <a class="dropdown-item <?php if(($this->controller == 'Backend\Controller\Formacion') && ($this->action == 'inscripciones' || $this->action == 'inscripcion')){ echo 'active'; } ?>" href="<?php echo $this->basePath('/backend/formacion/inscripciones') ?>"><i class="fa fa-edit"></i> Inscripciones</a>
+                        <a class="dropdown-item <?php if(($this->controller == 'Backend\Controller\Formacion') && ($this->action == 'inscritos')){ echo 'active'; } ?>" href="<?php echo $this->basePath('/backend/formacion/inscritos') ?>"><i class="fa fa-users"></i> Inscritos</a>
+                        <a class="dropdown-item <?php if(($this->controller == 'Backend\Controller\Formacion') && ($this->action == 'participantes')){ echo 'active'; } ?>" href="<?php echo $this->basePath('/backend/formacion/participantes') ?>"><i class="fa fa-child"></i> Menores inscritos</a>
+                        <a class="dropdown-item <?php if(($this->controller == 'Backend\Controller\Formacion') && ($this->action == 'categorias')){ echo 'active'; } ?>" href="<?php echo $this->basePath('/backend/formacion/categorias') ?>"><i class="fa fa-tags"></i> Categorías</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown <?php if(($this->controller == 'Backend\Controller\Empleo')){ echo 'active'; } ?>">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownEmpleo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-briefcase"></i> Empleo
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownEmpleo">
+                        <a class="dropdown-item <?php if(($this->controller == 'Backend\Controller\Empleo') && ($this->action == 'ofertas' || $this->action == 'oferta')){ echo 'active'; } ?>" href="<?php echo $this->basePath('/backend/empleo/ofertas') ?>"><i class="fa fa-bullhorn"></i> Ofertas de empleo</a>
+                        <a class="dropdown-item <?php if(($this->controller == 'Backend\Controller\Empleo') && ($this->action == 'candidaturas' || $this->action == 'candidatura')){ echo 'active'; } ?>" href="<?php echo $this->basePath('/backend/empleo/candidaturas') ?>"><i class="far fa-address-card"></i> Candidaturas</a>
+                        <a class="dropdown-item <?php if(($this->controller == 'Backend\Controller\Empleo') && ($this->action == 'sectores')){ echo 'active'; } ?>" href="<?php echo $this->basePath('/backend/empleo/sectores') ?>"><i class="fa fa-city"></i> Sectores</a>
+                        <a class="dropdown-item <?php if(($this->controller == 'Backend\Controller\Empleo') && ($this->action == 'ofertasempleo')){ echo 'active'; } ?>" href="<?php echo $this->basePath('/backend/empleo/ofertasempleo') ?>"><i class="fa fa-bullhorn"></i> Ofertas para colegiados</a>
+                    </div>
+                </li>
+                <li class="nav-item <?php if(($this->controller == 'Backend\Controller\Empresas')){ echo 'active'; } ?>" >
+                    <a class="nav-link" href="<?php echo $this->basePath('/backend/empresas') ?>" >
+                        <i class="far fa-building"></i> Empresas
+                    </a>
+                </li>
+                <li class="nav-item dropdown <?php if(($this->controller == 'Backend\Controller\Usuarios' && $this->action == 'carpetas') || ($this->controller == 'Backend\Controller\Index' && $this->action == 'documentos')){ echo 'active'; } ?>">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownFormacion" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-folder"></i> Documentación
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownFormacion">
+                        <a class="dropdown-item <?php if($this->controller == 'Backend\Controller\Index' && $this->action == 'documentos'){ echo 'active'; } ?>" href="<?php echo $this->basePath('/backend/index/documentos') ?>"><i class="fa fa-folder-open"></i> Gestor documental</a>
+                        <a class="dropdown-item <?php if($this->controller == 'Backend\Controller\Usuarios' && $this->action == 'carpetas'){ echo 'active'; } ?>" href="<?php echo $this->basePath('/backend/usuarios/carpetas') ?>"><i class="fa fa-folder-plus"></i> Directorios</a>
+                    </div>
+                </li>
+                <li class="nav-item <?php if(($this->controller == 'Backend\Controller\Usuarios' && $this->action != 'carpetas')){ echo 'active'; } ?>" >
+                    <a class="nav-link" href="<?php echo $this->basePath('/backend/usuarios') ?>" >
+                        <i class="fa fa-users"></i> Usuarios
+                    </a>
+                </li>
+            <?php }else if($this->usuario_session->get('rol') == 'c4legiado'){ ?>
+                <li class="nav-item <?php if($this->controller == 'Backend\Controller\Index' && $this->action != 'documentos'){ echo 'active'; } ?>" >
+                    <a class="nav-link" href="<?php echo $this->basePath('/backend/index') ?>" >
+                        <i class="fa fa-home"></i> Inicio
+                    </a>
+                </li>
+                <li class="nav-item <?php if(($this->controller == 'Backend\Controller\Formacion')){ echo 'active'; } ?>" >
+                    <a class="nav-link" href="<?php echo $this->basePath('/backend/formacion/inscritos/') ?>" >
+                        <i class="fa fa-graduation-cap"></i> Cursos / jornadas
+                    </a>
+                </li>
+                <li class="nav-item dropdown <?php if($this->controller == 'Backend\Controller\Empleo' && $this->action != 'oferta'){ echo 'active'; } ?>">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownEmpleo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-briefcase"></i> Empleo
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownEmpleo">
+                        <a class="dropdown-item <?php if(($this->controller == 'Backend\Controller\Empleo') && ($this->action == 'ofertasempleo')){ echo 'active'; } ?>" href="<?php echo $this->basePath('/backend/empleo/ofertasempleo') ?>"><i class="fa fa-bullhorn"></i> Ofertas de empleo</a>
+                        <a class="dropdown-item <?php if(($this->controller == 'Backend\Controller\Empleo') && ($this->action == 'candidaturas' || $this->action == 'candidatura')){ echo 'active'; } ?>" href="<?php echo $this->basePath('/backend/empleo/candidaturas') ?>"><i class="far fa-address-card"></i> Candidaturas</a>
+                    </div>
+                </li>
+                <li class="nav-item <?php if(($this->controller == 'Backend\Controller\Usuarios')){ echo 'active'; } ?>" >
+                    <a class="nav-link" href="<?php echo $this->basePath('/backend/usuarios/ficha/') ?>" >
+                        <i class="fa fa-user"></i> Mi perfil
+                    </a>
+                </li>
+                <li class="nav-item" >
+                    <a class="nav-link" href="https://ingenierosindustriales.es/downloads/buscador-de-normas-aenormas/" target="_blank">
+                        <i class="fa fa-search"></i> Normas UNE
+                    </a>
+                </li>
+                <?php if((int)$this->usuario_session->get('id_emp') && $this->usuario_session->get('autorizado') == 1){ ?>
+                    <li class="nav-item dropdown <?php if($this->controller == 'Backend\Controller\Empresas' || ($this->controller == 'Backend\Controller\Empleo' && $this->action == 'oferta')){ echo 'active'; } ?>">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownEmpleo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-building"></i> Mi empresa
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownEmpleo">
+                            <a class="dropdown-item <?php if(($this->controller == 'Backend\Controller\Empresas') && ($this->action == 'ficha')){ echo 'active'; } ?>" href="<?php echo $this->basePath('/backend/empresas/ficha') ?>"><i class="fa fa-edit"></i> Ficha de empresa</a>
+                            <a class="dropdown-item <?php if(($this->controller == 'Backend\Controller\Empleo') && ($this->action == 'oferta')){ echo 'active'; } ?>" href="<?php echo $this->basePath('/backend/empleo/oferta') ?>"><i class="fa fa-bullhorn"></i> Crear oferta</a>
+                        </div>
+                    </li>
+                <?php } ?>
+                <?php if($this->usuario_session->get('acceso_gestor_documental')){ ?>
+                    <li class="nav-item <?php if($this->controller == 'Backend\Controller\Index' && $this->action == 'documentos'){ echo 'active'; } ?>" >
+                        <a class="nav-link" href="<?php echo $this->basePath('/backend/index/documentos') ?>" >
+                            <i class="fa fa-folder"></i> Documentos
+                        </a>
+                    </li>
+                <?php } ?>
+            <?php }else if($this->usuario_session->get('rol') == 'us4ario'){ ?>
+                <li class="nav-item <?php if(($this->controller == 'Backend\Controller\Index')){ echo 'active'; } ?>" >
+                    <a class="nav-link" href="<?php echo $this->basePath('/backend/index') ?>" >
+                        <i class="fa fa-home"></i> Inicio
+                    </a>
+                </li>
+                <li class="nav-item <?php if(($this->controller == 'Backend\Controller\Formacion')){ echo 'active'; } ?>" >
+                    <a class="nav-link" href="<?php echo $this->basePath('/backend/formacion/inscritos/') ?>" >
+                        <i class="fa fa-graduation-cap"></i> Cursos / jornadas
+                    </a>
+                </li>
+                <li class="nav-item <?php if($this->controller == 'Backend\Controller\Empleo' && $this->action != 'oferta'){ echo 'active'; } ?>" >
+                    <a class="nav-link" href="<?php echo $this->basePath('/backend/empleo/ofertasempleo/') ?>" >
+                        <i class="fa fa-bullhorn"></i> Ofertas de empleo
+                    </a>
+                </li>
+                <li class="nav-item <?php if(($this->controller == 'Backend\Controller\Usuarios')){ echo 'active'; } ?>" >
+                    <a class="nav-link" href="<?php echo $this->basePath('/backend/usuarios/ficha/') ?>" >
+                        <i class="fa fa-user"></i> Mi perfil
+                    </a>
+                </li>
+                <?php if((int)$this->usuario_session->get('id_emp') && $this->usuario_session->get('autorizado') == 1){ ?>
+                    <li class="nav-item dropdown <?php if($this->controller == 'Backend\Controller\Empresas' || ($this->controller == 'Backend\Controller\Empleo' && $this->action == 'oferta')){ echo 'active'; } ?>">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownEmpleo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-building"></i> Mi empresa
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownEmpleo">
+                            <a class="dropdown-item <?php if(($this->controller == 'Backend\Controller\Empresas') && ($this->action == 'ficha')){ echo 'active'; } ?>" href="<?php echo $this->basePath('/backend/empresas/ficha') ?>"><i class="fa fa-edit"></i> Ficha de empresa</a>
+                            <a class="dropdown-item <?php if(($this->controller == 'Backend\Controller\Empleo') && ($this->action == 'oferta')){ echo 'active'; } ?>" href="<?php echo $this->basePath('/backend/empleo/oferta') ?>"><i class="fa fa-bullhorn"></i> Crear oferta</a>
+                        </div>
+                    </li>
+                <?php } ?>
+                <?php if($this->usuario_session->get('acceso_gestor_documental')){ ?>
+                    <li class="nav-item <?php if($this->controller == 'Backend\Controller\Index' && $this->action == 'documentos'){ echo 'active'; } ?>" >
+                        <a class="nav-link" href="<?php echo $this->basePath('/backend/index/documentos') ?>" >
+                            <i class="fa fa-folder"></i> Documentos
+                        </a>
+                    </li>
+                <?php } ?>
+            <?php } ?>
+            <li class="nav-item" >
+                <a class="nav-link" href="<?php echo $this->basePath('/auth/index/logout') ?>" >
+                    <i class="fa fa-sign-out-alt"></i>
+                    Salir
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>

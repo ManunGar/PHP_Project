@@ -1,0 +1,540 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<div class="">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mb-2">
+                <div class="btn-toolbar float-right" aria-label="Barra de inscripciones" role="toolbar" >
+                    <div class="" aria-label="First group" role="group">
+                        <?php if($this->usuario->get('rol') != '4dmin'){ ?>
+                            <a title="Volver" href="<?php echo $this->basePath('/backend/formacion/inscritos/') ?>" aria-label="Volver" class="btn btn-light" data-toggle="tooltip" ><i class="fa fa-arrow-left"></i></a>
+                        <?php }else{ ?>
+                            <?php if($this->inscripcion->get('id') > 0){ ?>
+                                <?php if($this->inscripcion->get('estado') == 0){ ?>
+                                    <a title="Enviar e-mail de inscripción incompleta" href="<?php echo $this->basePath('/backend/formacion/inscripcion/'.$this->inscripcion->get('id').'/-1/5') ?>" aria-label="Enviar e-mail de inscripción incompleta" class="btn btn-warning" data-toggle="tooltip" ><i class="far fa-paper-plane"></i></a>
+                                <?php }else if($this->inscripcion->get('total') > 0){ ?>
+                                    <a title="Enviar e-mail de pago" href="<?php echo $this->basePath('/backend/formacion/inscripcion/'.$this->inscripcion->get('id').'/-1/2') ?>" aria-label="Enviar e-mail de pago" class="btn btn-info" data-toggle="tooltip" ><i class="far fa-paper-plane"></i></a>
+                                <?php } ?>
+                                <a title="Enviar confirmación" href="<?php echo $this->basePath('/backend/formacion/inscripcion/'.$this->inscripcion->get('id').'/-1/3') ?>" aria-label="Aprobar" class="btn btn-success" data-toggle="tooltip" ><i class="far fa-thumbs-up"></i></a>
+                                <a title="Rechazar" href="<?php echo $this->basePath('/backend/formacion/inscripcion/'.$this->inscripcion->get('id').'/-1/4') ?>" aria-label="Rechazar" class="btn btn-danger" data-toggle="tooltip" ><i class="far fa-thumbs-down"></i></a>
+                                <?php if($this->inscripcion->get('estado') <= 1 && ($this->curso->get('tipo') == 0 || $this->curso->get('tipo') == 1) && count($this->trabajadores) > 0){ ?>
+                                    <a title="Añadir inscrito" href="#add-workers" aria-label="Añadir inscrito" data-toggle="modal" class="btn btn-light" data-toggle="tooltip" ><i class="fa fa-user"></i></a>
+                                <?php }else if($this->inscripcion->get('estado') <= 1 && $this->curso->get('tipo') == 2  && count($this->menores) > 0){ ?>
+                                    <a title="Añadir menor" href="#add-childs" aria-label="Añadir menor" data-toggle="modal" class="btn btn-light" data-toggle="tooltip" ><i class="fa fa-child"></i></a>
+                                <?php } ?>
+                            <?php } ?>
+
+                            <a title="Volver" href="<?php echo $this->basePath('/backend/formacion/inscripciones/') ?>" aria-label="Volver" class="btn btn-light" data-toggle="tooltip" ><i class="fa fa-arrow-left"></i></a>
+                        <?php } ?>
+                    </div>
+                </div>
+                <h1><i class="fa fa-book-open"></i> 
+                    <?php if($this->inscripcion->get('id') > 0){ ?>
+                        Ficha de la inscripción <span class="badge badge-<?php echo Utilidades::systemOptions('inscripciones', 'estado',2)[(int)$this->inscripcion->get('estado')]; ?>"><?php echo str_pad($this->inscripcion->get('id'), 5, '0', STR_PAD_LEFT); ?></span>
+                    <?php }else{ ?>
+                        Nueva inscripción
+                    <?php } ?>
+                </h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <?php Utilidades::muestraMensaje($this->ok,$this->ko); ?>
+    <div class="row">
+        <div class="col-12">
+            <ul class="nav nav-tabs mt-2"  id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link <?php if($this->tab_inscripcion == 'default'){ echo 'active'; } ?> " href="#default" aria-controls="inscripciones" role="tab" data-toggle="tab">
+                        Datos 
+                    </a>
+                </li>
+                <?php if($this->inscripcion->get('id') > 0){ 
+                    if($this->inscripcion->get('curso')->get('tipo') == 2 ){?>
+                        <li class="nav-item">
+                            <a class="nav-link <?php if($this->tab_inscripcion == 'participantes'){ echo 'active'; } ?> " href="#participantes" aria-controls="participantes" role="tab" data-toggle="tab">
+                                Participantes
+                            </a>
+                        </li>
+                <?php }else{ ?>
+                    <li class="nav-item">
+                            <a class="nav-link <?php if($this->tab_inscripcion == 'inscritos'){ echo 'active'; } ?> " href="#inscritos" aria-controls="inscritos" role="tab" data-toggle="tab">
+                                Inscritos
+                            </a>
+                        </li>
+                <?php }
+                } ?>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade <?php if($this->tab_inscripcion == 'default'){ echo 'show active'; } ?> " id="default" >
+                    <div class="row">
+                        <div class="col-12">
+                            <form class="wb" action="<?php echo $this->basePath('/backend/formacion/inscripcion'); ?>" method="post">
+                                <div class="row mb-2">
+                                    <div class="col-12" >
+                                        <h2 class="text-blue font-weight-bold">Datos de gestión</h2>
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6 col-md-3" >
+                                        <label for="id_usu" class="control-label">
+                                            <?php if($this->usuario->get('rol') == '4dmin' && (int)$this->inscripcion->get('id_usu')){ ?>
+                                                <a href="<?php echo $this->basePath('/backend/usuarios/ficha/'.(int)$this->inscripcion->get('id_usu')); ?>">Tramitador</a> *
+                                            <?php }else{ ?>
+                                                Tramitador *
+                                            <?php } ?>
+                                        </label>
+                                        <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                            <input type="hidden" id="usua-nombre" name="id_usu" class="form-control usua-nombre" value="<?php echo (int)$this->inscripcion->get('id_usu'); ?>" />
+                                        <?php }else{ ?>
+                                            <p class="form-control" readonly>
+                                                <?php echo $this->creador->get('nombre') . ' ' . $this->creador->get('apellidos'); ?>
+                                            </p>
+                                        <?php } ?>
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6 col-md-3" >
+                                        <label for="id_cur" class="control-label">
+                                            <?php if($this->usuario->get('rol') == '4dmin' && (int)$this->inscripcion->get('id_cur')){ ?>
+                                                <a href="<?php echo $this->basePath('/backend/formacion/curso/'.(int)$this->inscripcion->get('id_cur')); ?>">Curso</a> *
+                                            <?php }else{ ?>
+                                                Curso *
+                                            <?php } ?>
+                                        </label>
+                                        <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                            <input type="hidden" id="curs-nombre" name="id_cur" class="form-control curs-nombre" value="<?php echo (int)$this->inscripcion->get('id_cur'); ?>" />
+                                        <?php }else{ ?>
+                                            <p class="form-control" readonly>
+                                                <?php echo $this->curso->get('nombre'); ?>
+                                            </p>
+                                        <?php } ?>
+                                    </div>
+                                    
+                                    <div class="form-group col-12 col-sm-6 col-md-3" >
+                                        <label for="id_emp" class="control-label">
+                                            <?php if($this->usuario->get('rol') == '4dmin' && (int)$this->inscripcion->get('id_emp')){ ?>
+                                                <a href="<?php echo $this->basePath('/backend/empresas/ficha/'.(int)$this->inscripcion->get('id_emp')); ?>">Empresa</a> *
+                                            <?php }else{ ?>
+                                                Empresa *
+                                            <?php } ?>
+                                        </label>
+                                        <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                           <input type="hidden" id="empr-nombre" name="id_emp" class="form-control empr-nombre" value="<?php echo (int)$this->inscripcion->get('id_emp'); ?>" />
+                                        <?php }else{ ?>
+                                            <p class="form-control" readonly>
+                                                <?php if((int)$this->inscripcion->get('id_emp')){ 
+                                                    echo $this->empresa->get('nombre'); 
+                                                }else{
+                                                    echo "Sin empresa relacionada";
+                                                } ?>
+                                            </p>
+                                        <?php } ?>
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6 col-md-3" >
+                                        <label for="estado" class="control-label">Estado</label>
+                                        <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                            <?php echo Utilidades::getSelect($this->inscripcion->get('estado'),'inscripciones','estado'); ?>
+                                        <?php }else{ ?>
+                                            <p>
+                                                <?php echo Utilidades::systemOptions('inscripciones', 'estado', 1)[$this->inscripcion->get('estado')]; ?>
+                                            </p>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-12" >
+                                        <h2 class="text-blue font-weight-bold">Datos de facturación</h2>
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6 col-md-3" >
+                                        <label for="nombre" class="control-label">Nombre *</label>
+                                        <input type="text" id="nombre" name="nombre" class="form-control" value="<?php echo $this->inscripcion->get('nombre'); ?>" required />
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6 col-md-3" >
+                                        <label for="cif" class="control-label">CIF *</label>
+                                        <input type="text" id="cif" name="cif" class="form-control" value="<?php echo $this->inscripcion->get('cif'); ?>" required />
+                                    </div>
+                                    <div class="w-100"></div>
+                                    <div class="form-group col-12 col-sm-6 col-md-3" >
+                                        <label for="direccion" class="control-label">Dirección</label>
+                                        <textarea type="text" id="direccion" name="direccion" class="form-control textarea" ><?php echo $this->inscripcion->get('direccion'); ?></textarea>
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6 col-md-3" >
+                                        <label for="cp" class="control-label">CP</label>
+                                        <input type="text" maxlength="9" id="cp" name="cp" class="form-control" value="<?php echo $this->inscripcion->get('cp'); ?>" />
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6 col-md-3" >
+                                        <label for="localidad" class="control-label">Localidad</label>
+                                        <input type="text" id="localidad" name="localidad" class="form-control" value="<?php echo $this->inscripcion->get('localidad'); ?>" />
+                                    </div>
+                                    <div class="form-group col-12 col-sm-6 col-md-3" >
+                                        <label for="provincia" class="control-label">Provincia</label>
+                                        <input type="text" id="provincia" name="provincia" class="form-control" value="<?php echo $this->inscripcion->get('provincia'); ?>" />
+                                    </div>
+
+                                    <div class="col-12" >
+                                        <div class="row">
+                                            <div class="form-group col-12 col-sm-6 col-md-3" >
+                                                <label for="nombre_empresa" class="control-label">Nombre <i>empresa</i></label>
+                                                <input type="text" id="nombre_empresa" name="nombre_empresa" class="form-control" value="<?php echo $this->inscripcion->get('nombre_empresa'); ?>" />
+                                            </div>
+                                            <div class="form-group col-12 col-sm-6 col-md-3" >
+                                                <label for="cif_empresa" class="control-label">CIF <i>empresa</i></label>
+                                                <input type="text" id="cif_empresa" name="cif_empresa" class="form-control" value="<?php echo $this->inscripcion->get('cif_empresa'); ?>" />
+                                            </div>
+                                            <div class="w-100"></div>
+                                            <div class="form-group col-12 col-sm-6 col-md-3" >
+                                                <label for="direccion_empresa" class="control-label">Dirección <i>empresa</i></label>
+                                                <textarea type="text" id="direccion_empresa" name="direccion_empresa" class="form-control textarea" ><?php echo $this->inscripcion->get('direccion_empresa'); ?></textarea>
+                                            </div>
+                                            <div class="form-group col-12 col-sm-6 col-md-3" >
+                                                <label for="cp_empresa" class="control-label">CP <i>empresa</i></label>
+                                                <input type="text" maxlength="9" id="cp_empresa" name="cp_empresa" class="form-control" value="<?php echo $this->inscripcion->get('cp_empresa'); ?>" />
+                                            </div>
+                                            <div class="form-group col-12 col-sm-6 col-md-3" >
+                                                <label for="localidad_empresa" class="control-label">Localidad <i>empresa</i></label>
+                                                <input type="text" id="localidad_empresa" name="localidad_empresa" class="form-control" value="<?php echo $this->inscripcion->get('localidad_empresa'); ?>" />
+                                            </div>
+                                            <div class="form-group col-12 col-sm-6 col-md-3" >
+                                                <label for="provincia_empresa" class="control-label">Provincia <i>empresa</i></label>
+                                                <input type="text" id="provincia_empresa" name="provincia_empresa" class="form-control" value="<?php echo $this->inscripcion->get('provincia_empresa'); ?>" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-2">
+                                    <?php if($this->inscripcion->get('id') == 0 || $this->inscripcion->get('importe') > 0){ ?>
+                                        <div class="col-12" >
+                                            <h2 class="text-blue font-weight-bold">Pago</h2>
+                                        </div>
+                                        <div class="form-group col-12 col-sm-6 col-md-3" >
+                                            <label for="beca" class="control-label">Solicita beca</label>
+                                            <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                                <?php echo Utilidades::getSelect($this->inscripcion->get('beca'),'inscripciones','beca'); ?>
+                                            <?php }else{ ?>
+                                                <p>
+                                                    <?php echo Utilidades::systemOptions('inscripciones', 'beca', 1)[$this->inscripcion->get('beca')]; ?>
+                                                </p>
+                                            <?php } ?>
+                                        </div>
+                                        <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                            <div class="form-group col-12 col-sm-6 col-md-3" >
+                                                <label for="importe" class="control-label">Precio inicial (€)</label>
+                                                    <input type="text" id="importe" name="importe" class="form-control" value="<?php echo $this->inscripcion->get('importe'); ?>" readonly />
+                                            </div>
+                                            <div class="form-group col-12 col-sm-6 col-md-3" >
+                                                <label for="beca_importe" class="control-label">Importe beca (€)</label>
+                                                <input type="text" id="beca_importe" name="beca_importe" class="form-control" value="<?php echo $this->inscripcion->get('beca_importe'); ?>" <?php if($this->usuario->get('rol') != '4dmin'){ echo "readonly"; } ?> />
+                                            </div>
+                                        <?php } ?>
+                                        <div class="form-group col-12 col-sm-6 col-md-3" >
+                                            <label for="total" class="control-label">Precio total (€)</label>
+                                            <input type="text" id="total" name="total" class="form-control" value="<?php echo number_format($this->inscripcion->get('total'),2); ?>" disabled />
+                                        </div>
+                                        <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                            <div class="form-group col-12 col-sm-6 col-md-3" >
+                                                <label for="pago" class="control-label">Método de pago</label>
+                                                <?php echo Utilidades::getSelect($this->inscripcion->get('pago'),'inscripciones','pago'); ?>
+                                            </div>
+                                            <?php if($this->inscripcion->get('id') > 0){ ?>
+                                                <div class="form-group col-12 col-sm-6 col-md-3" >
+                                                    <label for="justificante_pago" class="control-label">Justificante de pago</label><br />
+                                                    <?php if(!empty($this->inscripcion->get('justificante_pago')) && file_exists(\Application\Model\Entity\Inscripcion::FILE_DIRECTORY_JUSTIFICANTE . $this->inscripcion->get('justificante_pago'))){ ?>
+                                                        <a class="btn btn-blue  mr-2" target="_BLANK" href="<?php echo $this->basePath(str_replace('./public', '', \Application\Model\Entity\Inscripcion::FILE_DIRECTORY_JUSTIFICANTE) . $this->inscripcion->get('justificante_pago')); ?>" aria-label="Ver justificante de pago" >
+                                                            Descargar
+                                                        </a>
+                                                        <a title="Borrar justificante de pago" href="<?php echo  $this->basePath('/backend/formacion/inscripcionjustificante/'.$this->inscripcion->get('id')); ?>" aria-label="Borrar justificante de pago" class="btn btn-danger" data-toggle="tooltip" ><i class="fa fa-trash"></i></a>
+                                                    <?php }else{ ?>
+                                                        <a class="btn btn-blue" href="#carga-justificante" aria-label="Adjuntar" data-toggle="modal" >
+                                                            Adjuntar
+                                                        </a>
+                                                    <?php } ?>
+                                                </div>
+                                            <?php } ?>
+                                        <?php } ?>
+                                    <?php } ?>
+                                    <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                        <div class="form-group col-12 col-sm-6" >
+                                            <label for="observaciones" class="control-label">Observaciones</label>
+                                            <input type="text" id="observaciones" name="observaciones" class="form-control" value="<?php echo $this->inscripcion->get('observaciones'); ?>" />
+                                        </div>
+                                    <?php } ?>
+                                    <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                        <div class="col-12" >
+                                            <div class="form-group" >
+                                                <input type="hidden" name="id_ins" value="<?php echo $this->inscripcion->get('id'); ?>" />
+                                                <input type="hidden" id="justificante_pago" name="justificante_pago" value="<?php echo $this->inscripcion->get('justificante_pago'); ?>"/>
+                                                <button type="submit" name="boton" value="guardar" class="btn btn-purple float-right">Guardar</button>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- Inscritos -->
+                <div role="tabpanel" class="tab-pane fade <?php if($this->tab_inscripcion == 'inscritos'){ echo 'show active'; } ?> " id="inscritos" >
+                    <div class="row">
+                        <div class="col-12">
+                            <?php if((int)$this->numi){ ?>
+                            <div class="table-responsive wb" >
+                                <table class="table table-striped" >			
+                                    <thead class="b-color_4 table-header ">
+                                        <tr>
+                                            <th class="table-col-2">Nombre</th>
+                                            <th class="table-col-1">Curso</th>
+                                            <th class="table-col-1 text-center">Fecha</th>
+                                            <th class="table-col-1">Importe</th>
+                                            <th class="table-col-1">Estado</th>
+                                            <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                                <th class="table-col-1 text-center">Opc.</th>
+                                            <?php } ?>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach($this->inscritos as $inscrito): ?>
+                                            <tr>
+                                                <td>
+                                                    <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                                        <a href="<?php echo $this->basePath('/backend/usuarios/ficha/' . $inscrito['id_usu']) ?>" title="" class="">
+                                                            <?php echo $inscrito['usuariosNombre']." ".$inscrito['usuariosApellidos']; ?>
+                                                        </a>
+                                                    <?php }else{ ?>
+                                                        <?php echo $inscrito['usuariosNombre']." ".$inscrito['usuariosApellidos']; ?>
+                                                    <?php } ?>
+                                                    <?php 
+                                                    if(!empty($inscrito['telefono'])){
+                                                        echo '<br/><small>'.$inscrito['telefono'].'</small>'; 
+                                                    }
+                                                    if(!empty($inscrito['email'])){
+                                                        echo '<br/><small>'.$inscrito['email'].'</small>';
+                                                    }
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                                        <a href="<?php echo $this->basePath('/backend/formacion/cursos/' . $inscrito['id_cur']) ?>" title="" class="">
+                                                            <?php echo $inscrito['cursosNombre']; ?>
+                                                       </a>
+                                                    <?php }else{ ?>
+                                                        <?php echo $inscrito['cursosNombre']; ?>
+                                                    <?php } ?>
+                                                   <?php echo '<br/><small>' .Utilidades::systemOptions('cursos', 'tipo')[$inscrito['tipo']]; ?>
+                                                </td>
+                                                <td class="text-center"><?php echo Utilidades::giraFecha($inscrito['fecha']); ?></td>
+                                                <td class="text-left"><?php echo number_format($inscrito['importe'],2,'.',',').'&euro;'; ?></td>
+                                                <td><a href="<?php echo $this->basePath('/backend/formacion/inscritos/' . $inscrito['id_ui']) ?>" title="" class="" ><?php echo Utilidades::systemOptions('inscripciones', 'estado',1)[$inscrito['estado']]; ?></a></td>
+                                                <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                                    <td class="text-center">
+                                                        <a href="<?php echo $this->basePath('/backend/formacion/borrarinscrito/' . $inscrito['id_ui']) ?>" title="Borrar" class="btn btn-light btn-sm red" onclick="return confirm('&iquest;Est&aacute; seguro que desea borrar al inscrito?')" ><i class="fa fa-trash"></i></a>
+                                                    </td>
+                                                <?php } ?>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                                <?php Utilidades::muestraPaginacion($this->numi, $this->pagei, $this->basePath('/backend/formacion/inscripcion/' . $this->inscripcion->get('id').'/'.$this->pag.'/'),50) ?>
+                            </div>
+                            <?php }else{ ?>
+                                <div class="table-responsive wb" >
+                                    <?php Utilidades::muestraMensaje(null, null, 'No hay ningun inscrito asociado a esta inscripción.'); ?>
+                                </div>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+                <!-- Participantes -->
+                <div role="tabpanel" class="tab-pane fade <?php if($this->tab_inscripcion == 'participantes'){ echo 'show active'; } ?> " id="participantes" >
+                    <div class="row">
+                        <div class="col-12">
+                            <?php if((int)$this->numm){ ?>
+                            <div class="table-responsive wb" >
+                                <table class="table table-sm table-striped" >			
+                                    <thead class="b-color_4 table-header ">
+                                        <tr>
+                                            <th class="table-col-1 text-center">ID</th>
+                                            <th class="table-col-2">Tutor</th>
+                                            <th class="table-col-2">Menor inscrito</th>
+                                            <th class="table-col-3">Curso</th>
+                                            <th class="table-col-1 text-center">Fecha</th>
+                                            <th class="table-col-2">Estado</th>
+                                            <th class="table-col-1 text-center">Opc.</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach($this->participantes as $participante): ?>
+                                            <tr>
+                                                <td class="text-center">
+                                                    <a href="<?php echo $this->basePath('/backend/formacion/inscripcion/' . $participante['id_ins']) ?>" >
+                                                        <span class="badge badge-<?php echo Utilidades::systemOptions('inscripciones', 'estado',2)[(int)$participante['estado']]; ?>"><?php echo str_pad($participante['id_ins'], 5, '0', STR_PAD_LEFT); ?></span>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a href="<?php echo $this->basePath('/backend/usuarios/ficha/' . $participante['id_usu']) ?>" title="" class="">
+                                                        <?php echo $participante['usuariosNombre']." ".$participante['usuariosApellidos']; ?>
+                                                    </a>
+                                                    <?php 
+                                                    if(!empty($participante['telefono'])){
+                                                        echo '<br/><small>'.$participante['telefono'].'</small>'; 
+                                                    }
+                                                    if(!empty($participante['email'])){
+                                                        echo '<br/><small>'.$participante['email'].'</small>';
+                                                    }
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <a href="" title="" class="">
+                                                        <?php echo $participante['menoresNombre']." ".$participante['menoresApellidos']; ?>
+                                                    </a>
+                                                     <?php echo '<br/><small>'.Utilidades::giraFecha($participante['nacimiento']).'</small>'; ?>
+                                                </td>
+                                                <td>
+                                                     <a href="<?php echo $this->basePath('/backend/formacion/cursos/' . $participante['id_cur']) ?>" title="" class="">
+                                                         <?php echo $participante['cursosNombre']; ?>
+                                                    </a>
+                                                    <?php echo '<br/><small>' .Utilidades::systemOptions('cursos', 'tipo')[$participante['tipo']]; ?>
+                                                </td>
+                                                <td class="text-center"><?php echo Utilidades::giraFecha($participante['fecha']); ?></td>
+                                                <td><a href="" title="" class="" ><?php echo Utilidades::systemOptions('inscripciones', 'estado',1)[$participante['estado']]; ?></a></td>
+                                                <td class="text-center">
+                                                    <a href="<?php echo $this->basePath('/backend/formacion/inscripcion/' . $participante['id_par']) ?>" title="Editar" class="btn btn-light btn-sm" ><i class="fa fa-edit"></i></a>
+                                                    <a href="<?php echo $this->basePath('/backend/formacion/borrarparticipante/'. $participante['id_par']) ?>" title="Borrar" class="btn btn-light btn-sm red" onclick="return confirm('&iquest;Est&aacute; seguro que desea borrar al participante?')" ><i class="fa fa-trash"></i></a>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                                <?php Utilidades::muestraPaginacion($this->numi, $this->pagei, $this->basePath('/backend/formacion/inscripcion/' . $this->inscripcion->get('id').'/'.$this->pag.'/0/'),50) ?>
+                            </div>
+                            <?php }else{ ?>
+                                <div class="table-responsive wb" >
+                                    <?php Utilidades::muestraMensaje(null, null, 'No hay ningun participante asociado a esta inscripción.'); ?>
+                                </div>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php if($this->inscripcion->get('id') > 0){ ?>
+    <?php if($this->inscripcion->get('estado') <= 1 && ($this->curso->get('tipo') == 0 || $this->curso->get('tipo') == 1) && count($this->trabajadores) > 0){ ?>
+        <div class="modal fade" id="add-workers" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" ><i class="fa fa-user"></i> Añadir participantes</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <form action="<?php echo $this->basePath('/backend/formacion/agregaparticipantes') ?>" method="post" >
+                        <div class="modal-body">
+                            <div class="row1 ">
+                                <div class="table-responsive mt-2 white" >
+                                    <table class="table table-sm table-striped" >
+                                        <thead class="b-color_4 table-header ">
+                                        <tr>
+                                            <th class="table-col-1 text-center">Seleccionar</th>
+                                            <th class="table-col-5">Trabajador</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php foreach($this->trabajadores as $trabajador): ?>
+                                            <tr>
+                                                <td class="text-center">
+                                                    <input type="checkbox" data-toggle="toggle" data-on="<i class='fa fa-check'></i>" data-off="<i class='fa fa-times'></i>" data-onstyle="success" data-offstyle="secondary" data-size="sm" name="id_usu[<?php echo $trabajador->get('id') ?>]" id="id_usu[<?php echo $trabajador->get('id') ?>]" />
+                                                </td>
+                                                <td><label for="id_usu[<?php echo $trabajador->get('id') ?>]"><?php echo $trabajador->get('nombre') . ' ' . $trabajador->get('apellidos'); ?></label>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer ">
+                            <input type="hidden" name="id_ins" value="<?php echo $this->inscripcion->get('id'); ?>" />
+                            <button type="submit" name="boton" value="buscar" class="btn btn-blue ">Añadir</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    <?php }else if($this->inscripcion->get('estado') <= 1 && $this->curso->get('tipo') == 2  && count($this->menores) > 0){ ?>
+
+        <div class="modal fade" id="add-childs" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" ><i class="fa fa-child"></i> Añadir participantes</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <form action="<?php echo $this->basePath('/backend/formacion/agregamenores') ?>" method="post" >
+                        <div class="modal-body">
+                            <div class="row1 ">
+                                <div class="table-responsive mt-2 white" >
+                                    <table class="table table-sm table-striped" >
+                                        <thead class="b-color_4 table-header ">
+                                        <tr>
+                                            <th class="table-col-1 text-center">Seleccionar</th>
+                                            <th class="table-col-5">Menor</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+
+
+                                        <?php foreach($this->menores as $menor): ?>
+                                            <tr>
+                                                <td class="text-center">
+                                                    <input type="checkbox" data-toggle="toggle" data-on="<i class='fa fa-check'></i>" data-off="<i class='fa fa-times'></i>" data-onstyle="success" data-offstyle="secondary" data-size="sm" name="id_men[<?php echo $menor->get('id') ?>]" id="id_men[<?php echo $menor->get('id') ?>]" />
+                                                </td>
+                                                <td>
+                                                    <label for="id_men[<?php echo $menor->get('id') ?>]"><?php echo $menor->get('nombre') . ' ' . $menor->get('apellidos'); ?></label>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer ">
+                            <input type="hidden" name="id_ins" value="<?php echo $this->inscripcion->get('id'); ?>" />
+                            <button type="submit" name="boton" value="buscar" class="btn btn-blue ">Añadir</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
+<?php } ?>
+
+<?php if($this->inscripcion->get('id') > 0){ ?>
+    <div class="modal fade" id="carga-justificante" tabindex="-1" role="dialog" aria-labelledby="cargar-justificante" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" ><i class="fa fa-file-upload"></i> Adjuntar justificante de pago</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <form action="<?php echo $this->basePath('/backend/formacion/inscripcionjustificante') ?>" method="post" enctype="multipart/form-data" >
+                    <div class="modal-body">
+                        <div class="row ">
+                            <div class="col-12" >
+                                <div class="form-group" >
+                                    <label for="comentario" class="control-label">Adjuntar justificante</label>
+                                    <input type="file" id="justificante_pago" name="justificante_pago" class="" required accept=".pdf,.doc,.docx,.jpg,.png,.jpeg" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer ">
+                        <input type="hidden" name="id_ins" value="<?php echo $this->inscripcion->get('id'); ?>" />
+                        <a href="#" data-dismiss="modal" type="button" class="btn btn-light" >Cancelar</a>
+                        <button type="submit" name="boton" value="buscar" class="btn btn-blue ">Adjuntar justificante</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+<?php } ?>

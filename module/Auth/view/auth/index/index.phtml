@@ -1,0 +1,119 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 col-md-6 d-none d-md-block" id="auth-image">
+            <p id="auth-message">Colegio Oficial de Ingenieros Industriales de Andalucía Occidental</p>
+        </div>
+        <div class="col-12 col-md-4">
+            <header>
+                <div class="row">
+                    <div class="col-12 mt-2">
+                        <img class="img-fluid logo" src="<?php echo $this->basePath('/assets/images/coiiaoc.png'); ?>" alt="Colegio Oficial de Ingenieros Industriales de Andalucía Occidental" />
+                    </div>
+                </div>
+            </header>
+            <?php Utilidades::muestraMensaje($this->ok,$this->ko,$this->info,null,'mt-4'); ?>
+            <div class="row mt-4" id="accordion">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mt-2">
+                                <h2><a href="#collapseOne" data-toggle="collapse"><i class="fa fa-user-check"></i> Ya estoy colegiado / registrado</a></h2>
+                            </div>
+                            <form class="wb bt-1 bd-5 mt-2 collapse show" action="<?php echo $this->basePath('/auth/index/index') ?>" method="post" id="collapseOne" data-parent="#accordion" >
+                                <div class="form-group ">
+                                    <label for="email">Nº de colegiado / Email</label>
+                                    <input type="text" class="form-control form-control-sm" id="email" name="email" value="" required >
+                                </div>
+                                <div class="form-group">
+                                    <label for="pwd">Contrase&ntilde;a</label>
+                                    <input type="password" class="form-control form-control-sm" id="pwd" name="pwd" value="" required >
+                                </div>
+                                <div class="text-right">
+                                    <button type="submit" class="btn btn-purple">Entrar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="mt-2">
+                                <h2><a href="#collapseTwo" data-toggle="collapse"><i class="fa fa-user-plus"></i> No estoy registrado</a></h2>
+                            </div>
+                            <form class="wb bt-1 bd-5 mt-2 collapse" action="<?php echo $this->basePath('/auth/index/index') ?>" method="post"  id="collapseTwo" data-parent="#accordion" >
+                                <div class="row">
+                                    <div class="form-group col-12 col-md-6" >
+                                        <label for="nombre" class="control-label">Nombre *</label>
+                                        <input type="text" id="nombre" name="nombre" class="form-control form-control-sm" value="<?php echo $this->usuario->get('nombre'); ?>" required />
+                                    </div>
+                                    <div class="form-group col-12 col-md-6" >
+                                        <label for="apellidos" class="control-label">Apellidos *</label>
+                                        <input type="text" id="apellidos" name="apellidos" class="form-control form-control-sm" value="<?php echo $this->usuario->get('apellidos'); ?>" required />
+                                    </div>
+                                    <div class="form-group col-12 col-md-6" >
+                                        <label for="telefono" class="control-label">Teléfono *</label>
+                                        <input type="text" id="telefono" name="telefono" class="form-control form-control-sm" value="<?php echo $this->usuario->get('telefono'); ?>" required />
+                                    </div>
+                                    <div class="form-group col-12 col-md-6" >
+                                        <label for="email" class="control-label">Email *</label>
+                                        <input type="email" id="email" name="email" class="form-control form-control-sm" value="<?php echo $this->usuario->get('email'); ?>" required />
+                                    </div>
+                                    <div class="form-group col-12 col-md-6" >
+                                        <label for="nif" class="control-label">NIF *</label>
+                                        <input type="text" id="nif" name="nif" class="form-control form-control-sm" value="<?php echo $this->usuario->get('nif'); ?>" required />
+                                    </div>
+                                    <div class="form-group col-12 col-md-6" >
+                                        <label for="clave">Nueva contraseña</label>
+                                        <input type="password" class="form-control form-control-sm" id="clave" name="pwd" value="" required >
+                                    </div>
+                                    <div class="form-group col-12 col-md-6" >
+                                        <label for="sexo" class="control-label">Sexo</label>
+                                        <?php echo Utilidades::getSelect($this->usuario->get('sexo'),'usuarios','sexo'); ?>
+                                    </div>
+                                    <div class="form-group col-12 col-md-6" >
+                                        <label for="sitlab" class="control-label">Situación laboral</label>
+                                        <?php echo Utilidades::getSelect($this->usuario->get('sitlab'),'usuarios','sitlab'); ?>
+                                    </div>
+                                    <div class="form-group col-12 col-md-6" >
+                                        <label for="titulacion" class="control-label">Titulación</label>
+                                        <input type="text" id="titulacion" name="titulacion" class="form-control form-control-sm" value="<?php echo $this->usuario->get('titulacion'); ?>" />
+                                    </div>
+                                    <div class="form-group col-12 col-md-6" >
+                                        <label for="nacimiento" class="control-label">Fecha de nacimiento</label>
+                                        <input type="text" id="nacimiento" name="nacimiento" class="form-control form-control-sm datepicker" value="<?php echo $this->usuario->get('nacimiento'); ?>" />
+                                    </div>
+                                    <div class="form-group col-12" >
+                                        <input type="checkbox" id="politica_privacidad" name="politica_privacidad" value="1" required />&nbsp;<a href="<?php echo Utilidades::systemOptions('cursos', 'web'); ?>/aviso-legal/" target="_BLANK" for="nacimiento" class="control-label">Acepto la política de privacidad</a>
+                                    </div>
+
+                                    <div class="text-right col-12">
+                                        <input type="hidden" id="id_usu" name="id_usu" value="0" />
+                                        <input type="hidden" id="sitcol" name="sitcol" value="3" />
+                                        <input type="hidden" id="colegiado" name="colegiado" value="" />
+                                        <button type="submit" class="btn btn-blue">Registrarme</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="mt-2">
+                                <h2><a href="#collapseThree" data-toggle="collapse"><i class="fa fa-user-lock"></i> Olvidé mi contraseña</a></h2>
+                            </div>
+                            <form class="wb bt-1 bd-5 mt-2 collapse" action="<?php echo $this->basePath('/auth/index/pass') ?>" method="post"  id="collapseThree" data-parent="#accordion" >
+                                <div class="form-group ">
+                                    <label for="email">Email</label>
+                                    <input type="text" class="form-control form-control-sm" id="email" name="email" value="" required >
+                                </div>
+                                <div class="text-right">
+                                    <button type="submit" class="btn btn-blue">Recuperar contraseña</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

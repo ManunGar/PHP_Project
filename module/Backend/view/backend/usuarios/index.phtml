@@ -1,0 +1,119 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 mb-2">
+            <div class="btn-toolbar float-right" aria-label="Barra de herramientas" role="toolbar" >
+                <div class="" aria-label="First group" role="group">
+                    <a title="Crear usuario" href="<?php echo $this->basePath('/backend/usuarios/ficha') ?>" aria-label="Crear usuario" class="btn btn-light" data-toggle="tooltip"><i class="fa fa-plus"></i></a>
+                    <a title="Buscar" href="#myModal" aria-label="Buscar" class="btn btn-light" data-toggle="modal" ><i class="fa fa-search"></i></a>
+                    <a title="Exportar a Excel" href="<?php echo $this->basePath('/backend/usuarios/xls/') ?>" aria-label="Exportar a Excel" class="btn btn-light" data-toggle="tooltip"><i class="fa fa-file-excel"></i></a>
+                    <a title="Mostrar todo" href="<?php echo $this->basePath('/backend/usuarios/index/' . $this->page . '/114') ?>" aria-label="Mostrar todo" class="btn btn-light" data-toggle="tooltip"><i class="fa fa-sync"></i></a>
+                </div>
+            </div>
+            <h1><i class="fa fa-users"></i> Usuarios (<?php echo $this->num; ?>)</h1>
+        </div>
+    </div>
+    <?php Utilidades::muestraMensaje($this->ok,$this->ko); ?>
+</div>
+<?php if(count($this->usuarios)){ ?> 
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="table-responsive mt-2 white" >
+                    <table class="table table-sm table-striped" >			
+                        <thead class="b-color_4 table-header ">
+                            <tr>
+                                <th class="table-col-1 text-center">ID</th>
+                                <th class="table-col-4">Nombre</th>
+                                <th class="table-col-2">Teléfono</th>
+                                <th class="table-col-3">Email</th>
+                                <th class="table-col-1">Sit. colegial</th>
+                                <th class="table-col-1 text-center">Opc.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach($this->usuarios as $usuario): ?>
+                                <tr>
+                                    <td class="text-center">
+                                        <a href="<?php echo $this->basePath('/backend/usuarios/ficha/' . $usuario->get('id')) ?>" >
+                                            <span class="badge badge-<?php echo Utilidades::systemOptions('usuarios', 'rol', 2)[$usuario->get('rol')]; ?>"><?php echo str_pad($usuario->get('colegiado'),5,'0',STR_PAD_LEFT); ?></span>
+                                        </a>
+                                    </td>
+                                    <td><a href="<?php echo $this->basePath('/backend/usuarios/ficha/' . $usuario->get('id')) ?>" title="Editar" class="" ><?php echo $usuario->get('nombre-completo'); ?></a></td>
+                                    <td><?php echo $usuario->get('telefono'); ?></td>
+                                    <td><?php echo $usuario->get('email'); ?></td>
+                                    <td>
+                                        <?php 
+                                        echo Utilidades::systemOptions('usuarios','sitcol')[(int)$usuario->get('sitcol')];
+                                        if($usuario->get('rol') == '4dmin'){
+                                            echo ' <i class="fa fa-star" title="Administrador"></i>';
+                                        }
+                                        ?>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="<?php echo $this->basePath('/backend/usuarios/ficha/' . $usuario->get('id')) ?>" title="Editar" class="btn btn-light btn-sm" ><i class="fa fa-edit"></i></a>
+                                        <a href="<?php echo $this->basePath('/backend/usuarios/borrar/' . $usuario->get('id')) ?>" title="Borrar" class="btn btn-light btn-sm red" onclick="return confirm('&iquest;Est&aacute; seguro que desea borrar el usuario?')" ><i class="fa fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                    <?php Utilidades::muestraPaginacion($this->num, $this->page, $this->basePath('/backend/usuarios/index/'),50) ?>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php } ?>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" ><i class="fa fa-search"></i> B&uacute;squeda de usuarios</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form action="<?php echo $this->basePath('/backend/usuarios/index') ?>" method="post" >
+                <div class="modal-body">
+                    <div class="row ">
+                        <div class="form-group col-12" >
+                            <label for="usua-nombre" class="control-label">Nombre</label>
+                            <input type="hidden" id="usua-nombre" name="id_usu" class="form-control usua-nombre" value="<?php echo (int)$this->buscador['id_usu']; ?>" />
+                        </div>
+                        <div class="form-group col-12 col-md-6" >
+                            <label for="usua-nif" class="control-label">NIF</label>
+                            <input type="text" id="usua-nif" name="nif" class="form-control form-control-sm usua-nif" value="<?php echo $this->buscador['nif']; ?>" />
+                        </div>
+                        <div class="form-group col-12 col-md-6" >
+                            <label for="usua-colegiado" class="control-label">Colegiado</label>
+                            <input type="text" id="usua-colegiado" name="colegiado" class="form-control form-control-sm usua-colegiado" value="<?php echo $this->buscador['colegiado']; ?>" />
+                        </div>
+                        <div class="form-group col-12 col-md-4" >
+                            <label for="usua-telefono" class="control-label">Teléfono</label>
+                            <input type="text" id="usua-telefono" name="telefono" class="form-control form-control-sm usua-telefono" value="<?php echo $this->buscador['telefono']; ?>" />
+                        </div>
+                        <div class="form-group col-12 col-md-8" >
+                            <label for="usua-email" class="control-label">Email</label>
+                            <input type="text" id="usua-email" name="email" class="form-control usua-email" value="<?php echo $this->buscador['email']; ?>" />
+                        </div>
+                        <div class="form-group col-12 col-md-6" >
+                            <label for="usua-rol" class="control-label">Situación colegial</label>
+                            <?php echo Utilidades::getSelect($this->buscador['sitcol'],'usuarios','sitcol',0,0,1); ?>
+                        </div>
+                        <div class="form-group col-12 col-md-6" >
+                            <label for="usua-rol" class="control-label">Rol</label>
+                            <?php echo Utilidades::getSelect($this->buscador['rol'],'usuarios','rol',0,0,1); ?>
+                        </div>
+                        <div class="form-group col-12 col-md-6" >
+                            <label for="autorizado" class="control-label">Autorizado de empresa</label>
+                            <?php echo Utilidades::getSelect($this->buscador['autorizado'],'usuarios','autorizado',0,0,1); ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer ">
+                    <a href="<?php echo $this->basePath('/backend/usuarios/index/' . $this->page . '/114') ?>" type="button" class="btn btn-light" >Limpiar</a>
+                    <button type="submit" name="boton" value="buscar" class="btn btn-blue ">Buscar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

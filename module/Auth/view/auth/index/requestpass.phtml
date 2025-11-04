@@ -1,0 +1,35 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<header class="container">
+    <div class="row">
+        <div class="col-12 text-center mt-2">
+            <img class="img-fluid logo" src="<?php echo $this->basePath('/assets/images/coiiaoc.png'); ?>" alt="Colegio Oficial de Ingenieros Industriales de Andalucía Occidental" />
+        </div>
+    </div>
+</header>
+<div class="container">
+    <?php Utilidades::muestraMensaje($this->ok,$this->ko,null,null,'col-sm-6 offset-sm-6 col-md-4 offset-md-4 mt-2'); ?>
+    <div class="row mt-4">
+        <div class="col-12 col-sm-6 offset-sm-6 col-md-4 offset-md-4">
+            <div class="mt-2">
+                <h1><i class="fa fa-user-lock"></i> Recuperar contraseña</h1>
+            </div>
+            <form class="wb bt-1 bd-5 mt-2" action="<?php echo $this->basePath('/auth/index/requestpass') ?>" method="post" >
+                <div class="form-group ">
+                    <label for="pwd">Nueva contraseña</label>
+                    <input type="password" class="form-control" id="pwd" name="pwd" value="" placeholder="Nueva contraseña" required autofocus >
+                </div>
+                <div class="form-group">
+                    <label for="password">Repita la contraseña</label>
+                    <input type="password" class="form-control" id="password" name="pwdrepeat" value="" placeholder="Repita la contraseña" required >
+                </div>
+                <div class="text-right">
+                    <a href="<?php echo $this->basePath() ?>/auth/index/index" class="btn btn-light" >
+                        Cancelar
+                    </a>
+                    <input type="hidden" name="hash" value="<?php echo $this->hash; ?>" />
+                    <button type="submit" class="btn btn-purple">Cambiar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

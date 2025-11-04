@@ -1,0 +1,26 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<div class="container mt-4">
+    <?php Utilidades::muestraMensaje($this->ok,$this->ko); ?>
+    <?php if($this->curso->get('tipo') != 2 && $this->curso->get('id') > 0 && (int)$curso->get('estado') == 1) { ?>
+        <div class="row">
+            <div class="col-12 col-md-4 offset-md-4">
+                <div class="row">
+                    <div class="col-12">
+                        <h1><i class="fa fa-times"></i> Inscripción cancelada</h1>
+                    </div>
+                </div>
+                <div class="wb bt-1 bd-5 mt-2">
+                    <div class="row">
+                        <div class="col-12">
+                            <p>Su inscripción al curso <strong><?php echo $curso->get('nombre'); ?></strong> ha sido cancelada.</p>
+                            <a class="btn btn-purple w-100 text-center radius-0" href="<?php echo Utilidades::systemOptions('cursos', 'web'); ?>/<?php echo $this->curso->get('post_id'); ?>">
+                                <i class="fa fa-link fa-5x d-block align-center"></i>
+                                Volver a la web
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
+</div>

@@ -1,0 +1,129 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<div class="container">
+    <div class="row">
+        <div class="col-12 mb-2">
+            <div class="btn-toolbar float-right" aria-label="Barra de herramientas" role="toolbar" >
+                <div class="" aria-label="First group" role="group">
+                    <a title="Buscar" href="#myModal" aria-label="Buscar" class="btn btn-light" data-toggle="modal" ><i class="fa fa-search"></i></a>
+                    <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                        <a title="Exportar a Excel" href="<?php echo $this->basePath('/backend/formacion/xlsparticipantes/') ?>" aria-label="Exportar a Excel" class="btn btn-light" data-toggle="tooltip"><i class="fa fa-file-excel"></i></a>
+                    <?php } ?>
+                    <a title="Mostrar todo" href="<?php echo $this->basePath('/backend/formacion/participantes/' . $this->pagp . '/114') ?>" aria-label="Mostrar todo" class="btn btn-light" data-toggle="tooltip"><i class="fa fa-sync"></i></a>
+                </div>
+            </div>
+            <h1><i class="fa fa-users"></i> Menores inscritos a cursos y jornadas (<?php echo $this->nump; ?>)</h1>
+        </div>
+    </div>
+    <?php Utilidades::muestraMensaje($this->ok,$this->ko); ?>
+</div>
+<?php if(count($this->participantes)){?> 
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="table-responsive mt-2 white" >
+                    <table class="table table-sm table-striped" >			
+                        <thead class="b-color_4 table-header ">
+                            <tr>
+                                <th class="table-col-1 text-center">ID</th>
+                                <th class="table-col-2">Tutor</th>
+                                <th class="table-col-2">Menor inscrito</th>
+                                <th class="table-col-3">Curso</th>
+                                <th class="table-col-1 text-center">Fecha</th>
+                                <th class="table-col-2">Estado</th>
+                                <th class="table-col-1 text-center">Opc.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach($this->participantes as $participante): ?>
+                                <tr>
+                                    <td class="text-center">
+                                        <a href="<?php echo $this->basePath('/backend/formacion/inscripcion/' . $participante['id_ins']) ?>" >
+                                            <span class="badge badge-<?php echo Utilidades::systemOptions('inscripciones', 'estado',2)[(int)$participante['estado']]; ?>"><?php echo str_pad($participante['id_ins'], 5, '0', STR_PAD_LEFT); ?></span>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="<?php echo $this->basePath('/backend/usuarios/ficha/' . $participante['id_usu']) ?>" title="" class="">
+                                            <?php echo $participante['usuariosNombre']." ".$participante['usuariosApellidos']; ?>
+                                        </a>
+                                        <?php 
+                                        if(!empty($participante['telefono'])){
+                                            echo '<br/><small>'.$participante['telefono'].'</small>'; 
+                                        }
+                                        if(!empty($participante['email'])){
+                                            echo '<br/><small>'.$participante['email'].'</small>';
+                                        }
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <a href="" title="" class="">
+                                            <?php echo $participante['menoresNombre']." ".$participante['menoresApellidos']; ?>
+                                        </a>
+                                         <?php echo '<br/><small>'.Utilidades::giraFecha($participante['nacimiento']).'</small>'; ?>
+                                    </td>
+                                    <td>
+                                         <a href="<?php echo $this->basePath('/backend/formacion/cursos/' . $participante['id_cur']) ?>" title="" class="">
+                                             <?php echo $participante['cursosNombre']; ?>
+                                        </a>
+                                        <?php echo '<br/><small>' .Utilidades::systemOptions('cursos', 'tipo')[$participante['tipo']]; ?>
+                                    </td>
+                                    <td class="text-center"><?php echo Utilidades::giraFecha($participante['fecha']); ?></td>
+                                    <td><a href="" title="" class="" ><?php echo Utilidades::systemOptions('inscripciones', 'estado',1)[$participante['estado']]; ?></a></td>
+                                    <td class="text-center">
+                                        <a href="<?php echo $this->basePath('/backend/formacion/inscripcion/' . $participante['id_par']) ?>" title="Editar" class="btn btn-light btn-sm" ><i class="fa fa-edit"></i></a>
+                                        <a href="<?php echo $this->basePath('/backend/formacion/borrarparticipante/'. $participante['id_ins']) ?>" title="Borrar" class="btn btn-light btn-sm red" onclick="return confirm('&iquest;Est&aacute; seguro que desea borrar al participante?')" ><i class="fa fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                    <?php Utilidades::muestraPaginacion($this->pagp, $this->pagp, $this->basePath('/backend/formacion/participantes/'),50) ?>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php } ?>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" ><i class="fa fa-search"></i> B&uacute;squeda de participantes</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form action="<?php echo $this->basePath('/backend/formacion/participantes') ?>" method="post" >
+                <div class="modal-body">
+                    <div class="row ">
+                        <div class="form-group col-12" >
+                            <label for="par-nombreUsuario" class="control-label">Usuario</label>
+                            <input type="hidden" id="par-nombreUsuario" name="id_usu" class="form-control usua-nombre" value="<?php echo (int)$this->buscador['id_usu']; ?>" />
+                        </div>
+                        <div class="form-group col-12" >
+                            <label for="par-nombreCurso" class="control-label">Curso</label>
+                            <input type="hidden" id="par-nombreCurso" name="id_cur" class="form-control curs-nombre" value="<?php echo (int)$this->buscador['id_cur']; ?>" />
+                        </div>
+                        <div class="form-group col-6" >
+                            <label for="par-fechaDesde" class="control-label">Fecha (desde)</label>
+                            <input type="text" id="par-fechaDesde" name="fechaDesde" class="form-control form-control-sm par-fechaDesde datepicker" value="<?php echo $this->buscador['fechaDesde']; ?>" />
+                        </div>
+                        <div class="form-group col-6" >
+                            <label for="par-fechaHasta" class="control-label">Fecha (hasta)</label>
+                            <input type="text" id="par-fechaHasta" name="fechaHasta" class="form-control form-control-sm par-fechaHasta datepicker" value="<?php echo $this->buscador['fechaHasta']; ?>" />
+                        </div>
+                        <div class="form-group col-12" >
+                            <label for="par-menor" class="control-label">Menor</label>
+                            <input type="text" id="par-menor" name="menorNombre" class="form-control par-menor" value="<?php echo $this->buscador['menorNombre']; ?>" />
+                        </div>
+                        <div class="form-group col-12" >
+                            <label for="insc-tipo" class="control-label">Estado</label>
+                            <?php echo Utilidades::getSelect($this->buscador['estado'],'inscripciones','estado',0,0,1); ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer ">
+                    <a href="<?php echo $this->basePath('/backend/formacion/participantes/' . $this->pagp . '/114') ?>" type="button" class="btn btn-light" >Limpiar</a>
+                    <button type="submit" name="boton" value="buscar" class="btn btn-blue ">Buscar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

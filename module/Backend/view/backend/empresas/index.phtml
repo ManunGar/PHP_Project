@@ -1,0 +1,105 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<div class="container">
+    <div class="row">
+        <div class="col-12 mb-2">
+            <div class="btn-toolbar float-right" aria-label="Barra de herramientas" role="toolbar" >
+                <div class="" aria-label="First group" role="group">
+                    <a title="Crear empresa" href="<?php echo $this->basePath('/backend/empresas/ficha') ?>" aria-label="Crear Empresa" class="btn btn-light" data-toggle="tooltip"><i class="fa fa-plus"></i></a>
+                    <a title="Buscar" href="#myModal" aria-label="Buscar" class="btn btn-light" data-toggle="modal" ><i class="fa fa-search"></i></a>
+                    <a title="Exportar a Excel" href="<?php echo $this->basePath('/backend/empresas/xls/') ?>" aria-label="Exportar a Excel" class="btn btn-light" data-toggle="tooltip"><i class="fa fa-file-excel"></i></a>
+                    <a title="Mostrar todo" href="<?php echo $this->basePath('/backend/empresas/index/' . $this->page . '/114') ?>" aria-label="Mostrar todo" class="btn btn-light" data-toggle="tooltip"><i class="fa fa-sync"></i></a>
+                </div>
+            </div>
+            <h1><i class="fa fa-building"></i> Empresas (<?php echo $this->num; ?>)</h1>
+        </div>
+    </div>
+    <?php Utilidades::muestraMensaje($this->ok,$this->ko); ?>
+</div>
+<?php if(count($this->empresas)){ ?> 
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="table-responsive mt-2 white" >
+                    <table class="table table-sm table-striped" >			
+                        <thead class="b-color_4 table-header ">
+                            <tr>
+                                <th class="table-col-md-2">Nombre</th>
+                                <th class="table-col-md-1">Sector</th>
+                                <th class="table-col-md-1">Estado</th>
+                                <th class="table-col-md-2">Usuario autorizado</th>
+                                <th class="table-col-md-1 text-center">Opc.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach($this->empresas as $empresa): ?>
+                                <tr>
+                                    <td>
+                                        <a href="<?php echo $this->basePath('/backend/empresas/ficha/' . $empresa['id_emp']) ?>" title="" class=""><?php echo $empresa['empresasNombre']; ?>
+                                        </a>
+                                        <?php echo '<br/><small>'.$empresa['cif'].'</small>'; ?>
+                                    </td>
+                                    <td><?php echo $empresa['sectoresNombre']; ?></td>
+                                    <td><a href="<?php echo $this->basePath('/backend/empresas/ficha/' . $empresa['id_emp']) ?>" title="" class=""><?php echo Utilidades::systemOptions('empresas', 'estado',1)[$empresa['estado']]; ?></a></td>
+                                    <td>
+                                        <a href="<?php echo $this->basePath('/backend/usuarios/ficha/' . $empresa['id_usu']) ?>" title="" class=""><?php echo $empresa['usuariosNombre']." ".$empresa['usuariosApellidos']; ?>
+                                        </a>
+                                        <?php 
+                                        if(!empty($empresa['telefono'])){
+                                            echo '<br/><small>'.$empresa['telefono'].'</small>'; 
+                                        }
+                                        if(!empty($empresa['email'])){
+                                            echo '<br/><small>'.$empresa['email'].'</small>';
+                                        }
+                                        ?>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="<?php echo $this->basePath('/backend/empresas/ficha/' . $empresa['id_emp']) ?>" title="Editar" class="btn btn-light btn-sm" ><i class="fa fa-edit"></i></a>
+                                        <a href="<?php echo $this->basePath('/backend/empresas/borrar/' . $empresa['id_emp']) ?>" title="Borrar" class="btn btn-light btn-sm red" onclick="return confirm('&iquest;Est&aacute; seguro que desea borrar la empresa?')" ><i class="fa fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                    <?php Utilidades::muestraPaginacion($this->num, $this->page, $this->basePath('/backend/empresas/index/'),50) ?>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php } ?>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" ><i class="fa fa-search"></i> B&uacute;squeda de empresas</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form action="<?php echo $this->basePath('/backend/empresas/index') ?>" method="post" >
+                <div class="modal-body">
+                    <div class="row ">
+                        <div class="form-group col-12" >
+                            <label for="empr-nombre" class="control-label">Nombre</label>
+                            <input type="hidden" id="empr-nombre" name="id_emp" class="form-control empr-nombre" value="<?php echo (int)$this->buscador['id_emp']; ?>" />
+                        </div>
+                        <div class="form-group col-12" >
+                            <label for="empr-cif" class="control-label">CIF</label>
+                            <input type="text" id="empr-cif" name="cif" class="form-control empr-cif" value="<?php echo $this->buscador['cif']; ?>" />
+                        </div>
+                        <div class="form-group col-12" >
+                            <label for="sec-nombre" class="control-label">Sector</label>
+                            <input type="hidden" id="sec-nombre" name="id_sec" class="form-control sec-nombre" value="<?php echo (int)$this->buscador['id_sec']; ?>" />
+                        </div>
+                        <div class="form-group col-12" >
+                            <label for="empr-estado" class="control-label">Estado</label>
+                            <?php echo Utilidades::getSelect($this->buscador['estado'],'empresas','estado',0,0,1); ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer ">
+                    <a href="<?php echo $this->basePath('/backend/empresas/index/' . $this->page . '/114') ?>" type="button" class="btn btn-light" >Limpiar</a>
+                    <button type="submit" name="boton" value="buscar" class="btn btn-blue ">Buscar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

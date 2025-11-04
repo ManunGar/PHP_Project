@@ -1,0 +1,410 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4"><i class="fa fa-sun"></i> Bienvenido <b><?php echo $this->usuario->get('nombre'); ?></b></h1>
+            <?php if((int)$this->num_autorizados_por_confirmar){ 
+                Utilidades::muestraMensaje(null, null, 'Hay '.$this->num_autorizados_por_confirmar.' usuarios pendientes de confirmar como autorizados de empresa.');
+            } ?>
+            <?php if($this->num_inscripciones > 0 || $this->num_candidaturas > 0 || $this->num_cursos > 0
+            || $this->num_inscritos > 0 || $this->num_ofertas > 0 || $this->num_empresas > 0){
+                $open_item = '';
+                ?>
+                <ul class="nav nav-tabs mt-2"  id="myTab" role="tablist">
+                    <?php if($this->num_inscripciones > 0){
+                        if($open_item == ''){
+                            $open_item = 'inscripciones';
+                        }
+                        ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?php if($open_item == 'inscripciones'){ echo 'active'; } ?>" href="#inscripciones" aria-controls="inscripciones" role="tab" data-toggle="tab">
+                            <?php echo $this->titulo_inscripciones; ?> (<?php echo $this->num_inscripciones; ?>)
+                        </a>
+                    </li>
+                    <?php } ?>
+                    <?php if($this->num_candidaturas > 0){
+                        if($open_item == ''){
+                            $open_item = 'candidaturas';
+                        }
+                        ?>
+                        <li class="nav-item">
+                            <a class="nav-link <?php if($open_item == 'candidaturas'){ echo 'active'; } ?>" href="#candidaturas" aria-controls="candidaturas" role="tab" data-toggle="tab">
+                                <?php echo $this->titulo_candidaturas; ?> (<?php echo $this->num_candidaturas; ?>)
+                            </a>
+                        </li>
+                    <?php } ?>
+                    <?php if($this->num_cursos > 0){
+                        if($open_item == ''){
+                            $open_item = 'cursos';
+                        } ?>
+                        <li class="nav-item">
+                            <a class="nav-link <?php if($open_item == 'cursos'){ echo 'active'; } ?>" href="#cursos" aria-controls="cursos" role="tab" data-toggle="tab">
+                                <?php echo $this->titulo_cursos; ?> (<?php echo $this->num_cursos; ?>)
+                            </a>
+                        </li>
+                    <?php } ?>
+                    <?php if($this->num_inscritos > 0){
+                        if($open_item == ''){
+                            $open_item = 'inscritos';
+                        } ?>
+                        <li class="nav-item">
+                            <a class="nav-link <?php if($open_item == 'inscritos'){ echo 'active'; } ?>" href="#inscritos" aria-controls="inscritos" role="tab" data-toggle="tab">
+                                <?php echo $this->titulo_inscritos; ?> (<?php echo $this->num_inscritos; ?>)
+                            </a>
+                        </li>
+                    <?php } ?>
+                    <?php if($this->num_ofertas > 0){
+                        if($open_item == ''){
+                            $open_item = 'ofertas';
+                        } ?>
+                        <li class="nav-item">
+                            <a class="nav-link <?php if($open_item == 'ofertas'){ echo 'active'; } ?>" href="#ofertas" aria-controls="ofertas" role="tab" data-toggle="tab">
+                                <?php echo $this->titulo_ofertas; ?> (<?php echo $this->num_ofertas; ?>)
+                            </a>
+                        </li>
+                    <?php } ?>
+                    <?php if($this->num_empresas > 0){
+                        if($open_item == ''){
+                            $open_item = 'empresas';
+                        } ?>
+                        <li class="nav-item">
+                            <a class="nav-link <?php if($open_item == 'empresas'){ echo 'active'; } ?>" href="#empresas" aria-controls="empresas" role="tab" data-toggle="tab">
+                                <?php echo $this->titulo_empresas; ?> (<?php echo $this->num_empresas; ?>)
+                            </a>
+                        </li>
+                    <?php } ?>
+                </ul>
+                <div class="tab-content">
+                    <?php if($this->num_inscripciones > 0){ ?>
+                        <div role="tabpanel" class="tab-pane fade <?php if($open_item == 'inscripciones'){ echo 'show active'; } ?>" id="inscripciones" >
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="table-responsive wb" >
+                                        <table class="table table-sm table-striped" >
+                                            <thead class="b-color_4 table-header ">
+                                            <tr>
+                                                <th class="table-col-1">ID</th>
+                                                <th class="table-col-2">Nombre</th>
+                                                <th class="table-col-2">Curso</th>
+                                                <th class="table-col-2 text-center">Fecha</th>
+                                                <th class="table-col-1">Importe</th>
+                                                <th class="table-col-1">Estado</th>
+                                                <th class="table-col-1">Pago</th>
+                                                <th class="table-col-1">Nº Inscritos</th>
+                                                <th class="table-col-1 text-center">Opc.</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <?php foreach($this->inscripciones as $inscripcion): ?>
+                                                <tr>
+                                                    <td>
+                                                        <a href="<?php echo $this->basePath('/backend/formacion/inscripcion/' . $inscripcion['id_ins']) ?>" >
+                                                            <span class="badge badge-<?php echo Utilidades::systemOptions('inscripciones', 'estado',2)[(int)$inscripcion['estado']]; ?>"><?php echo str_pad($inscripcion['id_ins'], 5, '0', STR_PAD_LEFT); ?></span>
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="<?php echo $this->basePath('/backend/usuarios/ficha/' . $inscripcion['id_usu']) ?>" title="Editar" class="">
+                                                            <?php echo $inscripcion['usuariosNombre']." ".$inscripcion['usuariosApellidos']; ?>
+                                                        </a>
+                                                        <?php 
+                                                        if(!empty($inscripcion['telefono'])){
+                                                            echo '<br/><small>'.$inscripcion['telefono'].'</small>'; 
+                                                        }
+                                                        if(!empty($inscripcion['email'])){
+                                                            echo '<br/><small>'.$inscripcion['email'].'</small>';
+                                                        }
+                                                        ?>
+                                                    </td>
+                                                    <td class="v-middle">
+                                                        <a href="<?php echo $this->basePath('/backend/formacion/curso/' . $inscripcion['id_cur']) ?>" title="Editar" class="">
+                                                            <?php echo $inscripcion['cursosNombre']; ?>
+                                                        </a>
+                                                        <?php echo '<br/><small>'.Utilidades::systemOptions('cursos', 'tipo')[$inscripcion['tipo']].'</small>'; ?>
+                                                    </td>
+                                                    <td class="text-center"><?php echo Utilidades::giraFecha($inscripcion['fecha']); ?></td>
+                                                    <td class="text-right"><?php echo number_format($inscripcion['importe'],2,'.',',').'&euro;'; ?></td>
+                                                    <td>
+                                                        <a href="<?php echo $this->basePath('/backend/formacion/inscripcion/' . $inscripcion['id_ins']) ?>" >
+                                                            <?php echo Utilidades::systemOptions('inscripciones', 'estado',1)[$inscripcion['estado']]; ?>
+                                                        </a>
+                                                    </td>
+                                                    <td><?php echo Utilidades::systemOptions('inscripciones', 'pago')[$inscripcion['pago']]; ?></td>
+                                                    <td><?php echo $inscripcion['inscritos']; ?></td>
+                                                    <td class="text-center">
+                                                        <a href="<?php echo $this->basePath('/backend/formacion/inscripcion/' . $inscripcion['id_ins']) ?>" title="Editar" class="btn btn-light btn-sm" ><i class="fa fa-edit"></i></a>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
+                    <?php if($this->num_candidaturas > 0){ ?>
+                        <div role="tabpanel" class="tab-pane fade <?php if($open_item == 'candidaturas'){ echo 'show active'; } ?>" id="candidaturas" >
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="table-responsive wb" >
+                                        <table class="table table-sm table-striped" >
+                                            <thead class="b-color_4 table-header ">
+                                            <tr>
+                                                <th class="table-col-md-2">Usuario</th>
+                                                <th class="table-col-md-1">Oferta</th>
+                                                <th class="table-col-md-1">Empresa</th>
+                                                <th class="table-col-md-1 text-center">Fecha</th>
+                                                <th class="table-col-md-1">Estado</th>
+                                                <th class="table-col-md-1 text-center">Opc.</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <?php foreach($this->candidaturas as $candidatura): ?>
+                                                <tr>
+                                                    <td>
+                                                        <a href="<?php echo $this->basePath('/backend/usuarios/ficha/' . $candidatura['id_usu']) ?>" title="" class="">
+                                                            <?php echo $candidatura['usuariosNombre']." ".$candidatura['usuariosApellidos']; ?>
+                                                        </a>
+                                                        <?php 
+                                                        if(!empty($candidatura['telefono'])){
+                                                            echo '<br/><small>'.$candidatura['telefono'].'</small>'; 
+                                                        }
+                                                        if(!empty($candidatura['email'])){
+                                                            echo '<br/><small>'.$candidatura['email'].'</small>';
+                                                        }
+                                                        ?>
+                                                    </td>
+                                                    <td><a href="<?php echo $this->basePath('/backend/empleo/candidatura/' . $candidatura['id_can']) ?>" title="" class=""><?php echo $candidatura['titulo']; ?></a></td>
+                                                    <td><a href="<?php echo $this->basePath('/backend/empresas/ficha/' . $candidatura['id_emp']) ?>" title="" class=""><?php echo $candidatura['empresasNombre']; ?></a></td>
+                                                    <td class="text-center"><?php echo Utilidades::giraFecha($candidatura['candidaturasFecha']); ?></td>
+                                                    <td><a href="<?php echo $this->basePath('/backend/empleo/candidatura/' . $candidatura['id_can']) ?>" title="" class=""><?php echo Utilidades::systemOptions('candidaturas', 'estado',1)[(int)$candidatura['candidaturasEstado']]; ?></a></td>
+                                                    <td class="text-center">
+                                                        <a href="<?php echo $this->basePath('/backend/empleo/candidatura/' . $candidatura['id_can']) ?>" title="Editar" class="btn btn-light btn-sm"><i class="fa fa-edit"></i></a>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
+
+                    <?php if($this->num_cursos > 0){ ?>
+                        <div role="tabpanel" class="tab-pane fade <?php if($open_item == 'cursos'){ echo 'show active'; } ?>" id="cursos" >
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="table-responsive wb" >
+                                        <table class="table table-sm table-striped" >
+                                            <thead class="b-color_4 table-header ">
+                                            <tr>
+                                                <th class="table-col-2">Nombre</th>
+                                                <th class="table-col-1">Tipo</th>
+                                                <th class="table-col-1">Estado</th>
+                                                <th class="table-col-1">Horario</th>
+                                                <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                                    <th class="table-col-1 text-center">Opc.</th>
+                                                <?php } ?>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <?php foreach($this->cursos as $curso): ?>
+                                                <tr>
+                                                    <td>
+                                                        <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                                            <a href="<?php echo $this->basePath('/backend/formacion/curso/' .  $curso->get('id')) ?>" title="Editar" class=""><?php echo $curso->get('nombre'); ?></a>
+                                                        <?php }else{ 
+                                                            if((int)$curso->get('post_id')){ 
+                                                                $cursoUrlWeb = Utilidades::systemOptions('cursos', 'web').'?p='.$curso->get('post_id'); ?>
+                                                                <a href="<?php echo $cursoUrlWeb; ?>" target="_blank" class=""><?php echo $curso->get('nombre'); ?></a>
+                                                            <?php }else{
+                                                                echo $curso->get('nombre');
+                                                            } ?>
+                                                        <?php } ?>
+                                                    </td>
+                                                    <td><?php echo Utilidades::systemOptions('cursos', 'tipo')[(int)$curso->get('tipo')]; ?></td>
+                                                    <td>
+                                                        <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                                            <a href="<?php echo $this->basePath('/backend/formacion/curso/' .  $curso->get('id')) ?>" title="Editar" class="">
+                                                                <?php echo Utilidades::systemOptions('cursos', 'estado',1)[(int)$curso->get('estado')]; ?>
+                                                            </a>
+                                                        <?php }else{ ?>
+                                                            <a href="<?php echo Utilidades::systemOptions('cursos', 'web'); ?>/?p=<?php echo $curso->get('post_id'); ?>" target="_BLANK"  class="">
+                                                                <?php echo Utilidades::systemOptions('cursos', 'estado',1)[(int)$curso->get('estado')]; ?>
+                                                            </a>
+                                                        <?php } ?>
+                                                    </td>
+                                                    <td><?php echo $curso->get('horario'); ?></td>
+                                                    <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                                        <td class="text-center">
+                                                            <a href="<?php echo $this->basePath('/backend/formacion/curso/' . $curso->get('id')) ?>" title="Editar" class="btn btn-light btn-sm" ><i class="fa fa-edit"></i></a>
+                                                        </td>
+                                                    <?php } ?>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
+
+
+                    <?php if($this->num_inscritos > 0){?>
+                        <div role="tabpanel" class="tab-pane fade <?php if($open_item == 'inscritos'){ echo 'show active'; } ?>" id="inscritos" >
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="table-responsive wb" >
+                                        <table class="table table-sm table-striped" >
+                                            <thead class="b-color_4 table-header ">
+                                            <tr>
+                                                <th class="table-col-2">Nombre</th>
+                                                <th class="table-col-1">Curso</th>
+                                                <th class="table-col-1 text-center">Fecha</th>
+                                                <th class="table-col-1">Importe</th>
+                                                <th class="table-col-1">Estado</th>
+                                                <th class="table-col-1 text-center">Opc.</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <?php foreach($this->inscritos as $inscrito): ?>
+                                                <tr>
+                                                    <td>
+                                                        <a href="<?php echo $this->basePath('/backend/usuarios/ficha/' . $inscrito['id_usu']) ?>" title="" class="">
+                                                            <?php echo $inscrito['usuariosNombre']." ".$inscrito['usuariosApellidos']; ?>
+                                                        </a>
+                                                        <?php 
+                                                        if(!empty($inscrito['telefono'])){
+                                                            echo '<br/><small>'.$inscrito['telefono'].'</small>'; 
+                                                        }
+                                                        if(!empty($inscrito['email'])){
+                                                            echo '<br/><small>'.$inscrito['email'].'</small>';
+                                                        }
+                                                        ?>
+                                                    </td>
+                                                    <td>
+                                                        <a href="<?php echo $this->basePath('/backend/formacion/cursos/' . $inscrito['id_cur']) ?>" title="" class="">
+                                                            <?php echo $inscrito['cursosNombre']; ?>
+                                                        </a>
+                                                        <?php echo '<br/><small>' .Utilidades::systemOptions('cursos', 'tipo')[$inscrito['tipo']]; ?>
+                                                    </td>
+                                                    <td class="text-center"><?php echo Utilidades::giraFecha($inscrito['fecha']); ?></td>
+                                                    <td class="text-right"><?php echo number_format($inscrito['importe'],2,'.',',').'&euro;'; ?></td>
+                                                    <td><a href="<?php echo $this->basePath('/backend/formacion/inscripcion/' . $inscrito['id_ins']) ?>" title="" class="" ><?php echo Utilidades::systemOptions('inscripciones', 'estado',1)[$inscrito['estado']]; ?></a></td>
+                                                    <td class="text-center">
+                                                        <a href="<?php echo $this->basePath('/backend/formacion/inscripcion/' . $inscrito['id_ins']) ?>" title="Editar" class="btn btn-light btn-sm" ><i class="fa fa-edit"></i></a>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
+
+                    <?php if($this->num_ofertas > 0){ ?>
+                        <div role="tabpanel" class="tab-pane fade <?php if($open_item == 'ofertas'){ echo 'show active'; } ?>" id="ofertas" >
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="table-responsive wb" >
+                                        <table class="table table-sm table-striped" >
+                                            <thead class="b-color_4 table-header ">
+                                            <tr>
+                                                <th class="table-col-2">Título</th>
+                                                <th class="table-col-1">Estado</th>
+                                                <th class="table-col-1 text-center">Fecha</th>
+                                                <th class="table-col-1">Plazas</th>
+                                                <th class="table-col-1">Empresa</th>
+                                                <th class="table-col-1">Sector</th>
+                                                <th class="table-col-1 text-center">Opc.</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <?php foreach($this->ofertas as $oferta): ?>
+                                                <tr>
+                                                    <td><a href="<?php echo $this->basePath('/backend/empleo/oferta/' . $oferta['id_ofe']) ?>" title="" class=""><?php echo $oferta['titulo']; ?></a></td>
+                                                    <td><a href="<?php echo $this->basePath('/backend/empleo/oferta/' . $oferta['id_ofe']) ?>" title="" class="" ><?php echo Utilidades::systemOptions('ofertas', 'estado',1)[$oferta['estado']]; ?></a></td>
+                                                    <td class="text-center"><?php echo Utilidades::giraFecha($oferta['fecha']); ?></td>
+                                                    <td><?php echo $oferta['plazas']; ?></td>
+                                                    <td>
+                                                        <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                                            <a href="<?php echo $this->basePath('/backend/empresas/ficha/' . $oferta['id_emp']) ?>" title="" class="">
+                                                                <?php echo $oferta['empresasNombre']; ?>
+                                                            </a>
+                                                        <?php }else{ ?>
+                                                            <?php echo $oferta['empresasNombre']; ?>
+                                                        <?php } ?>
+                                                    </td>
+                                                    <td><?php echo $oferta['sectoresNombre']; ?></td>
+                                                    <td class="text-center">
+                                                        <a href="<?php echo $this->basePath('/backend/empleo/oferta/' . $oferta['id_ofe']) ?>" title="Editar" class="btn btn-light btn-sm" ><i class="fa fa-edit"></i></a>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
+
+
+                    <?php if($this->num_empresas > 0){ ?>
+                        <div role="tabpanel" class="tab-pane fade <?php if($open_item == 'empresas'){ echo 'show active'; } ?>" id="empresas" >
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="table-responsive wb" >
+                                        <table class="table table-sm table-striped" >
+                                            <thead class="b-color_4 table-header ">
+                                            <tr>
+                                                <th class="table-col-md-2">Nombre</th>
+                                                <th class="table-col-md-1">Sector</th>
+                                                <th class="table-col-md-1">Estado</th>
+                                                <th class="table-col-md-2">Usuario autorizado</th>
+                                                <th class="table-col-md-1 text-center">Opc.</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <?php foreach($this->empresas as $empresa): ?>
+                                                <tr>
+                                                    <td>
+                                                        <a href="<?php echo $this->basePath('/backend/empresas/ficha/' . $empresa['id_emp']) ?>" title="" class=""><?php echo $empresa['empresasNombre']; ?>
+                                                        </a>
+                                                        <?php echo '<br/><small>'.$empresa['cif'].'</small>'; ?>
+                                                    </td>
+                                                    <td><?php echo $empresa['sectoresNombre']; ?></td>
+                                                    <td><a href="<?php echo $this->basePath('/backend/empresas/ficha/' . $empresa['id_emp']) ?>" title="" class=""><?php echo Utilidades::systemOptions('empresas', 'estado',1)[$empresa['estado']]; ?></a></td>
+                                                    <td>
+                                                        <a href="<?php echo $this->basePath('/backend/usuarios/ficha/' . $empresa['id_usu']) ?>" title="" class=""><?php echo $empresa['usuariosNombre']." ".$empresa['usuariosApellidos']; ?>
+                                                        </a>
+                                                        <?php 
+                                                        if(!empty($empresa['telefono'])){
+                                                            echo '<br/><small>'.$empresa['telefono'].'</small>'; 
+                                                        }
+                                                        if(!empty($empresa['email'])){
+                                                            echo '<br/><small>'.$empresa['email'].'</small>';
+                                                        }
+                                                        ?>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <a href="<?php echo $this->basePath('/backend/empresas/ficha/' . $empresa['id_emp']) ?>" title="Editar" class="btn btn-light btn-sm" ><i class="fa fa-edit"></i></a>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
+                </div>
+            <?php } ?>
+        </div>
+    </div>
+</div>

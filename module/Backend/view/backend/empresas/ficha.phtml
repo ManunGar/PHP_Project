@@ -1,0 +1,364 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<div class="">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mb-2">
+                <div class="btn-toolbar float-right" aria-label="Barra de empresas" role="toolbar" >
+                    <div class="" aria-label="First group" role="group">
+                        <a title="Relacionar usuario" href="#myModal" aria-label="Relacionar usuario" class="btn btn-light" data-toggle="modal" ><i class="fa fa-user-plus"></i></a>
+                        <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                            <?php if($this->empresa->get('id') > 0){ ?>
+                                <?php if($this->usuario->get('rol') == '4dmin' && $this->empresa->get('estado') == 0){ ?>
+                                    <a title="Activar" href="<?php echo $this->basePath('/backend/empresas/ficha/'.$this->empresa->get('id').'/-1/-1/-1/1') ?>" aria-label="Activar" class="btn btn-success" data-toggle="tooltip" ><i class="far fa-thumbs-up"></i></a>
+                                    <a title="Rechazar" href="<?php echo $this->basePath('/backend/empresas/ficha/'.$this->empresa->get('id').'/-1/-1/-1/2') ?>" aria-label="Rechazar" class="btn btn-danger" data-toggle="tooltip" ><i class="far fa-thumbs-down"></i></a>
+                                <?php } ?>
+                                <a title="Volver" href="<?php echo $this->basePath('/backend/empresas/index/') ?>" aria-label="Volver" class="btn btn-light" data-toggle="tooltip" ><i class="fa fa-arrow-left"></i></a>
+                            <?php } ?>
+                        <?php }else{ ?>   
+                            <a title="Crear oferta" href="<?php echo $this->basePath('/backend/empleo/oferta') ?>" aria-label="Crear oferta" class="btn btn-light" data-toggle="tooltip"><i class="fa fa-bullhorn"></i></a>
+                        <?php } ?>
+                    </div>
+                </div>
+                <h1><i class="fa fa-building"></i> 
+                    <?php if($this->empresa->get('id') > 0){ ?>
+                        Ficha de la empresa <span class="badge badge-<?php echo Utilidades::systemOptions('empresas', 'estado',2)[(int)$this->empresa->get('estado')]; ?>"><?php echo $this->empresa->get('nombre'); ?></span>
+                    <?php }else{ ?>
+                        Nueva empresa
+                    <?php } ?>
+                </h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <?php Utilidades::muestraMensaje($this->ok,$this->ko); ?>
+    <div class="row">
+        <div class="col-12">
+            <ul class="nav nav-tabs mt-2"  id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link <?php if($this->tab_empresa == 'default'){ echo 'active'; } ?> " href="#default" aria-controls="empresas" role="tab" data-toggle="tab">
+                        Datos
+                    </a>
+                </li>
+                <?php if($this->empresa->get('id') > 0){ ?>
+                <li class="nav-item">
+                    <a class="nav-link <?php if($this->tab_empresa == 'ofertas'){ echo 'active'; } ?> " href="#ofertas" aria-controls="ofertas" role="tab" data-toggle="tab">
+                        Ofertas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php if($this->tab_empresa == 'inscripciones'){ echo 'active'; } ?> " href="#inscripciones" aria-controls="inscripciones" role="tab" data-toggle="tab">
+                        Inscripciones a cursos
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php if($this->tab_empresa == 'usuarios'){ echo 'active'; } ?> " href="#usuarios" aria-controls="usuarios" role="tab" data-toggle="tab">
+                        Usuarios relacionados
+                    </a>
+                </li>
+                <?php } ?>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade <?php if($this->tab_empresa == 'default'){ echo 'show active'; } ?> " id="default" >
+                    <div class="row">
+                        <div class="col-12">
+                            <form class="wb" action="<?php echo $this->basePath('/backend/empresas/ficha/'.$this->empresa->get('id')) ?>" method="post">
+                                <div class="row mb-2">
+                                    <div class="col-12" >
+                                        <h2 class="text-blue font-weight-bold">Datos de gestión</h2>
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="nombre" class="control-label">Nombre</label>
+                                        <input type="text" id="nombre" name="nombre" class="form-control" value="<?php echo $this->empresa->get('nombre'); ?>" <?php if($this->usuario->get('rol') != '4dmin'){ echo "required";} ?> />
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="estado" class="control-label">Estado</label>
+                                        <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                            <?php echo Utilidades::getSelect($this->empresa->get('estado'),'empresas','estado'); ?>
+                                        <?php }else{ ?>
+                                            <p>
+                                                <?php echo Utilidades::systemOptions('empresas','estado', 1)[(int)$this->empresa->get('estado')]; ?>
+                                            </p>
+                                        <?php } ?>
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="autorizado" class="control-label">
+                                            <?php
+                                            $id_usu = (int)$this->autorizado->get('id');
+                                            if($id_usu && $this->usuario->get('rol') == '4dmin'){ ?>
+                                                <a href="<?php echo $this->basePath('/backend/usuarios/ficha/'.$id_usu) ?>">Autorizado</a>
+                                            <?php }else{ ?>
+                                                Autorizado
+                                            <?php } ?>
+                                        </label>
+                                        <input type="text" id="autorizado" name="autorizado" class="form-control" value="<?php if($id_usu){ echo $this->autorizado->get('nombre-completo');}else{ echo 'No definido';} ?>" readonly />
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="alta" class="control-label">Alta</label>
+                                        <input type="text" id="alta" name="alta" class="form-control datepicker" value="<?php echo $this->empresa->get('alta'); ?>" readonly />
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-12" >
+                                        <h2 class="text-blue font-weight-bold">Identificación</h2>
+                                    </div>
+                                    <div class="form-group col-sm-6" >
+                                        <label for="razonsocial" class="control-label">Razón social</label>
+                                        <input type="text" id="razonsocial" name="razonsocial" class="form-control" value="<?php echo $this->empresa->get('razonsocial'); ?>" <?php if($this->usuario->get('rol') != '4dmin'){ echo "required";} ?> />
+                                     </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="cif" class="control-label">CIF</label>
+                                        <input type="text" id="cif" name="cif" class="form-control" value="<?php echo $this->empresa->get('cif'); ?>" <?php if($this->usuario->get('rol') != '4dmin'){ echo "required";} ?> />
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="sec-nombre" class="control-label">Sector</label>
+                                        <input type="hidden" id="sec-nombre" name="id_sec" class="form-control sec-nombre" value="<?php echo (int)$this->empresa->get('id_sec'); ?>" />
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-12" >
+                                        <h2 class="text-blue font-weight-bold">Contacto</h2>
+                                    </div>
+                                    <div class="form-group col-sm-6" >
+                                        <label for="email" class="control-label">Email</label>
+                                        <input type="text" id="email" name="email" class="form-control" value="<?php echo $this->empresa->get('email'); ?>" <?php if($this->usuario->get('rol') != '4dmin'){ echo "required";} ?> />
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-3" >
+                                        <label for="telefono" class="control-label">Teléfono</label>
+                                        <input type="text" id="telefono" name="telefono" class="form-control" value="<?php echo $this->empresa->get('telefono'); ?>" <?php if($this->usuario->get('rol') != '4dmin'){ echo "required";} ?> />
+                                    </div>
+                                    <div class="form-group col-sm-6" >
+                                        <label for="direccion" class="control-label">Dirección</label>
+                                        <input type="text" id="direccion" name="direccion" class="form-control" value="<?php echo $this->empresa->get('direccion'); ?>" <?php if($this->usuario->get('rol') != '4dmin'){ echo "required";} ?> />
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-2" >
+                                        <label for="cp" class="control-label">Código postal</label>
+                                        <input type="text" id="cp" name="cp" class="form-control" value="<?php echo $this->empresa->get('cp'); ?>" <?php if($this->usuario->get('rol') != '4dmin'){ echo "required";} ?> />
+                                     </div>
+                                    <div class="form-group col-sm-6 col-md-4" >
+                                        <label for="localidad" class="control-label">Localidad</label>
+                                        <input type="text" id="localidad" name="localidad" class="form-control" value="<?php echo $this->empresa->get('localidad'); ?>" <?php if($this->usuario->get('rol') != '4dmin'){ echo "required";} ?> />
+                                     </div>
+                                    <div class="form-group col-sm-6 col-md-4" >
+                                        <label for="provincia" class="control-label">Provincia</label>
+                                        <input type="text" id="provincia" name="provincia" class="form-control" value="<?php echo $this->empresa->get('provincia'); ?>" <?php if($this->usuario->get('rol') != '4dmin'){ echo "required";} ?> />
+                                     </div>
+                                    <div class="form-group col-sm-6" >
+                                        <label for="web" class="control-label">Web</label>
+                                        <input type="text" id="web" name="web" class="form-control" value="<?php echo $this->empresa->get('web'); ?>" />
+                                     </div>
+                                    <div class="form-group col-12 col-sm-6 col-md-2 mt-4" >
+                                        <input type="hidden" id="id_emp" name="id_emp" value="<?php echo $this->empresa->get('id'); ?>"/>
+                                        <button type="submit" name="boton" value="guardar" class="btn btn-purple float-right">Guardar</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- Ofertas -->
+                <div role="tabpanel" class="tab-pane fade <?php if($this->tab_empresa == 'ofertas'){ echo 'show active'; } ?> " id="ofertas" >
+                    <div class="row">
+                        <div class="col-12">
+
+                            <?php if((int)$this->numo){ ?>
+                            <div class="table-responsive wb" >
+                                <table class="table table-striped" >			
+                                    <thead class="b-color_4 table-header ">
+                                        <tr>
+                                            <th class="table-col-2 text-center">ID</th>
+                                            <th class="table-col-3">Título</th>
+                                            <th class="table-col-2">Estado</th>
+                                            <th class="table-col-2 text-center">Fecha</th>
+                                            <th class="table-col-1">Plazas</th>
+                                            <th class="table-col-2 text-center">Opc.</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach($this->ofertas as $oferta): ?>
+                                            <tr>
+                                                <td class="text-center">
+                                                    <a href="<?php echo $this->basePath('/backend/empleo/oferta/' . $oferta['id_ofe']) ?>" title="" class="">
+                                                        <span class="badge badge-<?php echo Utilidades::systemOptions('ofertas', 'estado',2)[(int)$oferta['estado']]; ?>"><?php echo str_pad($oferta['id_ofe'],5,'0',STR_PAD_LEFT); ?></span>
+                                                    </a>
+                                                </td>
+                                                <td><a href="<?php echo $this->basePath('/backend/empleo/oferta/' . $oferta['id_ofe']) ?>"><?php echo $oferta['titulo']; ?></a></td>
+                                                <td><a href="<?php echo $this->basePath('/backend/empleo/oferta/' . $oferta['id_ofe']) ?>"><?php echo Utilidades::systemOptions('ofertas', 'estado',1)[$oferta['estado']]; ?></a></td>
+                                                <td class="text-center"><?php echo Utilidades::giraFecha($oferta['fecha']); ?></td>
+                                                <td class="text-center"><?php echo $oferta['plazas']; ?></td>
+                                                <td class="text-center">
+                                                    <a href="<?php echo $this->basePath('/backend/empleo/oferta/' . $oferta['id_ofe']) ?>" title="Editar" class="btn btn-light btn-sm" ><i class="fa fa-edit"></i></a>
+                                                    <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                                        <a href="<?php echo $this->basePath('/backend/empleo/borraroferta/' . $oferta['id_ofe']) ?>" title="Borrar" class="btn btn-light btn-sm red" onclick="return confirm('&iquest;Est&aacute; seguro que desea borrar el registro?')" ><i class="fa fa-trash"></i></a>
+                                                    <?php } ?>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                                <?php Utilidades::muestraPaginacion($this->numo, $this->pago, $this->basePath('/backend/empresas/ficha/' . $this->empresa->get('id').'/'. $this->pago.'/'),50) ?>
+                            </div>
+                            <?php }else{ ?>
+                                <div class="table-responsive wb" >
+                                    <?php Utilidades::muestraMensaje(null, null, 'No hay ningna oferta asociada a esta empresa.'); ?>
+                                </div>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+                <!-- Inscripciones -->
+                <div role="tabpanel" class="tab-pane fade <?php if($this->tab_empresa == 'inscripciones'){ echo 'show active'; } ?> " id="inscripciones" >
+                    <div class="row">
+                        <div class="col-12">
+                            <?php if((int)$this->numi){ ?>
+                            <div class="table-responsive wb" >
+                                <table class="table table-striped" >			
+                                    <thead class="b-color_4 table-header ">
+                                        <tr>
+                                            <th class="table-col-2">Usuario</th>
+                                            <th class="table-col-1 text-center">Fecha</th>
+                                            <th class="table-col-1">Importe</th>
+                                            <th class="table-col-1">Estado</th>
+                                            <th class="table-col-1">Pago</th>
+                                            <th class="table-col-1">Nº Inscritos</th>
+                                            <th class="table-col-1 text-center">Opc.</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach($this->inscripciones as $inscripcion): ?>
+                                            <tr>
+                                                <td>
+                                                    <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                                        <a href="<?php echo $this->basePath('/backend/usuarios/ficha/' . $inscripcion['id_usu']) ?>">
+                                                            <?php echo $inscripcion['usuariosNombre']." ".$inscripcion['usuariosApellidos']; ?>
+                                                        </a>
+                                                    <?php }else{ ?>
+                                                        <?php echo $inscripcion['usuariosNombre']." ".$inscripcion['usuariosApellidos']; ?>
+                                                    <?php } ?>
+                                                    <?php 
+                                                    if(!empty($inscripcion['telefono'])){
+                                                        echo '<br/><small>'.$inscripcion['telefono'].'</small>'; 
+                                                    }
+                                                    if(!empty($inscripcion['email'])){
+                                                        echo '<br/><small>'.$inscripcion['email'].'</small>';
+                                                    }
+                                                    ?>
+                                                </td>
+                                                <td class="text-center"><?php echo Utilidades::giraFecha($inscripcion['fecha']); ?></td>
+                                                <td class="text-left"><?php echo number_format($inscripcion['importe'],2,'.',',').'&euro;'; ?></td>
+                                                <td><?php echo Utilidades::systemOptions('inscripciones', 'estado',1)[$inscripcion['estado']]; ?></td>
+                                                <td><?php echo Utilidades::systemOptions('inscripciones', 'pago')[$inscripcion['pago']]; ?></td>
+                                                <td><?php echo $inscripcion['inscritos']; ?></td>
+                                                <td class="text-center">
+                                                    <a href="<?php echo $this->basePath('/backend/formacion/inscripcion/' . $inscripcion['id_ins']) ?>" title="Editar" class="btn btn-light btn-sm" ><i class="fa fa-edit"></i></a>
+                                                    <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                                        <a href="<?php echo $this->basePath('/backend/formacion/borrarinscripcion/' . $inscripcion['id_ins']) ?>" title="Borrar" class="btn btn-light btn-sm red" onclick="return confirm('&iquest;Est&aacute; seguro que desea borrar el registro?')" ><i class="fa fa-trash"></i></a>
+                                                    <?php } ?>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                               <?php Utilidades::muestraPaginacion($this->numi, $this->pagi, $this->basePath('/backend/empresas/ficha/' . $this->empresa->get('id').'/' .$this->pagi. '/' ),50) ?>
+                            </div>
+                            <?php }else{ ?>
+                                <div class="table-responsive wb" >
+                                    <?php Utilidades::muestraMensaje(null, null, 'No hay ninguna inscripcion asociada a esta empresa.'); ?>
+                                </div>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+                <!-- Usuarios -->
+                <div role="tabpanel" class="tab-pane fade <?php if($this->tab_empresa == 'usuarios'){ echo 'show active'; } ?> " id="usuarios" >
+                    <div class="row">
+                        <div class="col-12">
+                            <?php if((int)$this->numu){ ?>
+                            <div class="table-responsive wb" >
+                                <table class="table table-striped" >			
+                                    <thead class="b-color_4 table-header ">
+                                        <tr>
+                                            <th class="table-col-2">Nombre</th>
+                                            <th class="table-col-2">Nº Colegiado</th>
+                                            <th class="table-col-1">NIF</th>
+                                            <th class="table-col-1">Sit. Colegial</th>
+                                            <th class="table-col-1">Autorizado</th>
+                                            <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                                <th class="table-col-1 text-center">Opc.</th>
+                                            <?php } ?>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach($this->usuarios as $usuario): ?>
+                                            <tr>
+                                                <td>
+                                                    <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                                        <a href="<?php echo $this->basePath('/backend/usuarios/ficha/' . $usuario->get('id')) ?>" title="" class="">
+                                                            <?php echo $usuario->get('nombre-completo') ;?>
+                                                        </a>
+                                                    <?php }else{ ?>
+                                                        <?php echo $usuario->get('nombre-completo') ;?>
+                                                    <?php } ?>
+                                                    <?php 
+                                                    if(!empty($usuario->get('telefono'))){
+                                                        echo '<br/><small>'.$usuario->get('telefono').'</small>'; 
+                                                    }
+                                                    if(!empty($usuario->get('email'))){
+                                                        echo '<br/><small>'.$usuario->get('email').'</small>';
+                                                    }
+                                                    ?>
+                                                </td>
+                                                <td><?php echo $usuario->get('colegiado'); ?></td>
+                                                <td><?php echo $usuario->get('nif'); ?></td>
+                                                <td><?php echo Utilidades::systemOptions('usuarios','sitcol')[(int)$usuario->get('sitcol')]; ?></td>
+                                                <td><?php echo Utilidades::systemOptions('usuarios','autorizado')[(int)$usuario->get('autorizado')]; ?></td>
+                                                <td class="text-center">
+                                                    <?php if($this->usuario->get('rol') == '4dmin'){ ?>
+                                                        <a href="<?php echo $this->basePath('/backend/usuarios/ficha/' . $usuario->get('id')) ?>" title="Editar" class="btn btn-light btn-sm" ><i class="fa fa-edit"></i></a>
+                                                    <?php } ?>
+                                                    <a href="<?php echo $this->basePath('/backend/empresas/usuarios/' . $usuario->get('id').'/'.$this->empresa->get('id')) ?>" title="Borrar relación" class="btn btn-light btn-sm" ><i class="fa fa-unlink"></i></a>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                                <?php Utilidades::muestraPaginacion($this->numu, $this->pagu, $this->basePath('/backend/empresas/ficha/' . $this->empresa->get('id').'/' .$this->pagu.'/'),50) ?>
+                            </div>
+                            <?php }else{ ?>
+                                <div class="table-responsive wb" >
+                                    <?php Utilidades::muestraMensaje(null, null, 'No hay ningún usuario asociado a esta empresa.'); ?>
+                                </div>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" ><i class="fa fa-user-plus"></i> Relacionar usuario con la empresa</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form action="<?php echo $this->basePath('/backend/empresas/usuarios') ?>" method="post" >
+                <div class="modal-body">
+                    <div class="row ">
+                        <div class="form-group col-12" >
+                            <label for="nif" class="control-label">NIF del usuario</label>
+                            <input type="text" id="nif" name="nif" class="form-control" value="" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer ">
+                    <input type="hidden" id="id_emp" name="id_emp" class="form-control" value="<?php echo $this->empresa->get('id'); ?>" />
+                    <button type="submit" name="boton" value="buscar" class="btn btn-blue ">Buscar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

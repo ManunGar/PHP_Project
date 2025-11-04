@@ -1,0 +1,189 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<?php if($this->usuario->get('rol') == 'us4ario'){ ?>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mb-2">
+                <h1><i class="fa fa-bullhorn"></i> Ofertas de empleo (<?php echo $this->num; ?>)</h1>
+            </div>
+        </div>
+        <?php Utilidades::muestraMensaje(null,null, 'Lo sentimos pero este servicio solo está disponible para colegiados.', null, null, false); ?>
+    </div>
+<?php }else{ ?>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mb-2">
+                <div class="btn-toolbar float-right" aria-label="Barra de herramientas" role="toolbar" >
+                    <div class="" aria-label="First group" role="group">
+                        <a title="Buscar" href="#myModal" aria-label="Buscar" class="btn btn-light" data-toggle="modal" ><i class="fa fa-search"></i></a>
+                        <a title="Mostrar todo" href="<?php echo $this->basePath('/backend/empleo/ofertasempleo/0/114') ?>" aria-label="Mostrar todo" class="btn btn-light" data-toggle="tooltip"><i class="fa fa-sync"></i></a>
+                    </div>
+                </div>
+                <h1><i class="fa fa-bullhorn"></i> Ofertas de empleo (<?php echo $this->num; ?>)</h1>
+            </div>
+        </div>
+        <?php Utilidades::muestraMensaje($this->ok,$this->ko); ?>
+    </div>
+    <?php if(count($this->ofertas)){ ?>
+
+    <div class="container mt-3">
+        <div class="row ofertas">
+            <?php foreach($this->ofertas as $oferta): ?>
+                <div class="col-sm-12 col-md-6">
+                    <div class="white">
+                        <div class="row pt-2 mb-2 ">
+                            <div class="col-12">
+                                <h3><?php echo $oferta['titulo']; ?></h3>
+                                <p>
+                                    <small>Publicada el <b><?php echo Utilidades::giraFecha($oferta['fecha']); ?></b> por <b><?php echo $oferta['empresasNombre']; ?></b>.</small>
+                                </p>
+                                <?php if(isset($oferta['descripcion'])){ ?>
+                                    <p>
+                                        <?php echo nl2br($oferta['descripcion']); ?>
+                                    </p>
+                                <?php } ?>
+                                <?php if($oferta['experiencia'] > 0){ ?> 
+                                    <p>
+                                        Experiencia solicitada: <b><?php echo $oferta['experiencia']; ?> años</b>
+                                    </p>
+                                <?php } ?>
+                                <p>
+                                    Plazas: <b><?php echo $oferta['plazas']; ?></b>
+                                </p>
+                                <a class="btn btn-purple float-right" href="#presentar-candidatura-<?php echo $oferta['id_ofe']; ?>" aria-label="Presentar candidatura" data-toggle="modal" >
+                                    Presentar candidatura
+                                </a>
+                                <a class="btn btn-blue float-right mr-2" href="#ver-oferta-<?php echo $oferta['id_ofe']; ?>" aria-label="Ver oferta" data-toggle="modal" >
+                                    Ver más
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal fade" id="ver-oferta-<?php echo $oferta['id_ofe']; ?>" tabindex="-1" role="dialog" aria-labelledby="ver-oferta" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" ><i class="fa fa-address-card"></i> <?php echo $oferta['titulo']; ?></h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row ">
+                                        <div class="col-12" >
+                                            <p>
+                                                <small>Publicada el <b><?php echo Utilidades::giraFecha($oferta['fecha']); ?></b> por <b><?php echo $oferta['empresasNombre']; ?></b>.</small>
+                                            </p>
+                                            <?php if(isset($oferta['descripcion'])){ ?>
+                                                <p>
+                                                    <?php echo nl2br($oferta['descripcion']); ?>
+                                                </p>
+                                            <?php } ?>
+                                            <?php if(isset($oferta['info'])){ ?>
+                                                <p>
+                                                    <?php echo nl2br($oferta['info']); ?>
+                                                </p>
+                                            <?php } ?>
+                                            <p>
+                                                Experiencia solicitada: <b><?php echo $oferta['experiencia']; ?> años</b>
+                                            </p>
+                                            <p>
+                                                Plazas: <b><?php echo $oferta['plazas']; ?></b>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer ">
+                                    <a href="#" data-dismiss="modal" type="button" class="btn btn-light float-right" >Cerrar</a>
+                                    <a class="btn btn-purple float-right presentar-candidatura" href="#presentar-candidatura-<?php echo $oferta['id_ofe']; ?>" aria-label="Presentar candidatura" data-code="<?php echo $oferta['id_ofe']; ?>" >
+                                        Presentar candidatura
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="presentar-candidatura-<?php echo $oferta['id_ofe']; ?>" tabindex="-1" role="dialog" aria-labelledby="presentar-candidatura" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" ><i class="fa fa-address-card"></i> Presentar candidatura</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                </div>
+                                <?php
+                                if(empty($this->usuario->get('cv'))){ ?>
+                                    <div class="modal-body">
+                                        <div class="row ">
+                                            <div class="form-group col-12" >
+                                                <?php Utilidades::muestraMensaje(null,null, 'Para poder presentar candidaturas debes subir un CV en el apartado "Mi perfil".', null, null, false); ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer ">
+                                        <a href="#" data-dismiss="modal" type="button" class="btn btn-light" >Cerrar</a>
+                                    </div>
+                                <?php }else if(!in_array($oferta['id_ofe'], $this->candidaturas_usuario)){ ?>
+                                    <form action="<?php echo $this->basePath('/backend/empleo/candidatura') ?>" method="post" >
+                                        <div class="modal-body">
+                                            <div class="row ">
+                                                <div class="form-group col-12" >
+                                                    <div class="form-group" >
+                                                        <label for="comentario" class="control-label">Carta de presentación</label>
+                                                        <textarea type="text" id="comentario" name="comentario" class="form-control" required></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer ">
+                                            <input type="hidden" name="id_ofe" value="<?php echo $oferta['id_ofe']; ?>" />
+                                            <input type="hidden" name="id_usu" value="<?php echo $this->usuario->get('id'); ?>" />
+                                            <input type="hidden" name="estado" value="1" />
+                                            <a href="#" data-dismiss="modal" type="button" class="btn btn-light" >Cancelar</a>
+                                            <button type="submit" name="boton" value="buscar" class="btn btn-blue ">Presentar candidatura</button>
+                                        </div>
+                                    </form>
+                                <?php }else{ ?>
+                                    <div class="modal-body">
+                                        <div class="row ">
+                                            <div class="form-group col-12" >
+                                                <?php Utilidades::muestraMensaje(null,null, 'Ya has presentado una candidatura para esta oferta.', null, null, false); ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer ">
+                                        <a href="#" data-dismiss="modal" type="button" class="btn btn-light float-right" >Cerrar</a>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <input type="hidden" name="oferta_seleccionada" id="oferta_seleccionada" value="<?php echo $this->oferta_seleccionada; ?>" />
+    <?php } ?>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" ><i class="fa fa-search"></i> B&uacute;squeda de ofertas</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <form action="<?php echo $this->basePath('/backend/empleo/ofertasempleo') ?>" method="post" >
+                    <div class="modal-body">
+                        <div class="row ">
+                            <div class="form-group col-12" >
+                                <label for="cate-nombre-empleo" class="control-label">Categoría</label>
+                                <input type="hidden" id="cate-nombre-empleo" name="categoria" class="form-control cate-nombre-empleo" value="<?php echo (int)$this->buscador['categoria']; ?>" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer ">
+                        <a href="<?php echo $this->basePath('/backend/empleo/ofertasempleo/' . $this->page . '/114') ?>" type="button" class="btn btn-light" >Limpiar</a>
+                        <button type="submit" name="boton" value="buscar" class="btn btn-blue ">Buscar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+<?php } ?>

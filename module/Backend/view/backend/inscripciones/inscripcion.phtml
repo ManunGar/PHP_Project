@@ -1,0 +1,89 @@
+<?php use Application\Model\Utility\Utilidades; ?>
+<div class="container mt-4">
+    <?php Utilidades::muestraMensaje($this->ok,$this->ko); ?>
+    <?php if($this->curso->get('tipo') != 2 && $this->curso->get('id') > 0 && (int)$curso->get('estado') == 1) { ?>
+        <div class="row">
+            <div class="col-12 col-md-4 offset-md-4">
+                <div class="row">
+                    <div class="col-12">
+                        <h1><i class="fa fa-edit"></i> Tipo de inscripción</h1>
+                    </div>
+                </div>
+                <div class="wb bt-1 bd-5 mt-2">
+                    <div class="row">
+                        <div class="col-12">
+                            <p>Seleccione si desea hacer una inscripción individual o para un grupo a través de una empresa:</p>
+                            <a class="btn btn-purple w-100 text-center radius-0" href="<?php echo $this->basePath('/backend/inscripciones/individual/' . $curso->get('id')) ?>">
+                                <i class="fa fa-user fa-5x d-block align-center"></i>
+                                Inscripción individual
+                            </a>
+                        </div>
+                        <div class="col-12 mt-2">
+                            <?php if($this->usuario->get('id_emp') > 0 && $this->usuario->get('autorizado') == 1){ ?>
+                                <a class="btn btn-blue w-100 text-center radius-0" href="<?php echo $this->basePath('/backend/inscripciones/empresa/' . $curso->get('id')); ?>">
+                            <?php }else{ ?>
+                                <a class="btn btn-blue w-100 text-center radius-0" href="#empresa" data-toggle="modal">
+                            <?php } ?>
+                                <i class="fa fa-users fa-5x d-block align-center"></i>
+                                Inscripción por empresa
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="modal fade" id="empresa" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" ><i class="fa fa-building"></i> Datos de la empresa</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <form class="wb" action="<?php echo $this->basePath('/backend/inscripciones/inscripcion') ?>" method="post">
+                        <div class="row">
+                            <div class="form-group col-12 col-sm-6" >
+                                <label for="nombre" class="control-label">Nombre comercial</label>
+                                <input type="text" id="nombre" name="nombre" class="form-control" value="<?php echo $this->empresa->get('nombre'); ?>" required/>
+                            </div>
+                            <div class="form-group col-12 col-sm-6" >
+                                <label for="razonsocial" class="control-label">Razón social</label>
+                                <input type="text" id="razonsocial" name="razonsocial" class="form-control" value="<?php echo $this->empresa->get('razonsocial'); ?>" required />
+                            </div>
+                            <div class="form-group col-12 col-sm-6" >
+                                <label for="cif" class="control-label">CIF</label>
+                                <input type="text" id="cif" name="cif" class="form-control" value="<?php echo $this->empresa->get('cif'); ?>" required />
+                            </div>
+                            <div class="form-group col-12 col-sm-6" >
+                                <label for="telefono" class="control-label">Teléfono</label>
+                                <input type="text" id="telefono" name="telefono" class="form-control" value="<?php echo $this->empresa->get('telefono'); ?>" required />
+                            </div>
+                            <div class="form-group col-12 col-sm-6" >
+                                <label for="email" class="control-label">Email</label>
+                                <input type="text" id="email" name="email" class="form-control" value="<?php echo $this->empresa->get('email'); ?>" required />
+                            </div>
+                            <div class="form-group col-12 col-sm-6" >
+                                <label for="id_sec" class="control-label">Sector</label>
+                                <select name="id_sec" class="form-control select2">
+                                    <?php
+                                    foreach($this->sectores as $sector):
+                                    ?>
+                                        <option value="<?php echo $sector->get('id')?>" <?php if($sector->get('id') == $this->empresa->get('id_sec')){ echo 'selected'; }?> ><?php echo $sector->get('nombre'); ?></option>
+                                    <?php
+                                    endforeach;
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="col-12" >
+                                <div class="form-group" >
+                                    <input type="hidden" name="id_cur" value="<?php echo $this->curso->get('id') ?>" />
+                                    <button type="submit" name="boton" value="guardar" class="btn btn-purple float-right">Guardar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
+</div>

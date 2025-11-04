@@ -1,0 +1,21 @@
+# Ignore IDES
+/nbproject/
+/.idea/
+
+# Ignore files of enviroment
+/config/autoload/development.local.php
+/config/autoload/local.php
+/data/session/*
+/data/log/*
+/data/cache/*
+
+# Ignore dependecies
+/vendor
+
+# Ignore copies
+/vendor_19012022
+/module_19012022
+/public/files/candidaturas/*
+/public/files/diplomas/*
+/public/files/justificantes/*
+/public/libraries/elFinder/files/*
